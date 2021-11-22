@@ -37,7 +37,7 @@ btrfs subvolume create @
 btrfs subvolume create @home
 btrfs subvolume create @var
 
-#Check if it is everything ok? Should be "@ @home @var-log"
+#Check if it is everything ok? Should be "@ @home @var"
 ls
 #leave directory for successful umount
 cd
@@ -143,22 +143,18 @@ sudo nano /etc/mkinitcpio.conf
 #HOOKS=( ... grub-btrfs-overlayfs)
 sudo mkinitcpio -P
 
-
-#reboot and take on look on grub menu.
-
+#reboot and take a look on grub menu.
 
 
-
-INSTALLING OTHER SOFT
+## INSTALLING OTHER SOFT
 
 #Upgrade system
 sudo pacman -Syu
 
-
 #console helpers
-sudo pikaur -S htop mc ncdu inxi
+sudo pikaur -S htop mc ncdu inxi micro
 
 #Bonus tuning (russian):
-https://docs.google.com/document/d/1IjTxl7LaPKJyRoLpGEhm4ptBhob_jRgLLQpMugS7qe8/edit
+#https://docs.google.com/document/d/1IjTxl7LaPKJyRoLpGEhm4ptBhob_jRgLLQpMugS7qe8/edit
 
 #to be continued...

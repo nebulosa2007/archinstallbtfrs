@@ -167,9 +167,7 @@ cd pikaur && makepkg -fsri && cd .. && rm -rf pikaur
 #For generation items in grub
 pikaur -S snap-pac-grub
 
-
 #Reboot and take a look on grub menu.
-
 
 #Scriptlist booting from writable snapshot in emergency
 #https://youtu.be/sm_fuBeaOqE?t=2002 - revert snapshot from arch iso
@@ -184,15 +182,13 @@ pikaur -S snap-pac-grub
 #reboot and choose in grub 24th snapshot
 
 
-
-INSTALLING OTHER SOFT
+## INSTALLING OTHER SOFT
 
 #Upgrade system
 sudo pacman -Syu
 
 #console helpers
-sudo pikaur -S htop mc ncdu inxi
+sudo pikaur -S htop mc ncdu inxi micro
 
 #Bonus tuning:
 https://docs.google.com/document/d/1IjTxl7LaPKJyRoLpGEhm4ptBhob_jRgLLQpMugS7qe8/edit
-
