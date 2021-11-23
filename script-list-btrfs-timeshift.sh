@@ -35,7 +35,7 @@ mount /dev/sda1 /mnt
 cd /mnt
 btrfs subvolume create @
 btrfs subvolume create @home
-btrfs subvolume create @var
+#btrfs subvolume create @var
 
 #Check if it is everything ok? Should be "@ @home @var"
 ls
@@ -45,15 +45,16 @@ umount /mnt
 
 #remount subvolumes. Options for SSD
 mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@ /dev/sda1 /mnt
-mkdir -p /mnt/{home,var}
-mount -o noatime,compress=zstd,space_cache=2,discard=async,subvol=@home /dev/sda1 /mnt/home
+#mkdir -p /mnt/{home,var}
+mkdir /mnt/home
+#mount -o noatime,compress=zstd,space_cache=2,discard=async,subvol=@home /dev/sda1 /mnt/home
 mount -o noatime,compress=zstd,space_cache=2,discard=async,subvol=@var /dev/sda1 /mnt/var
 
 #Check 
 lsblk
 
 #Install archlinux base. Standard linux kernel. For AMD - amd-ucode instead intel-ucode
-pacstrap /mnt base base-devel linux linux-firmware linux-headers intel-ucode btrfs-progs grub nano
+pacstrap /mnt base base-devel linux linux-firmware linux-headers intel-ucode btrfs-progs grub
 
 #generate fstab
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -71,9 +72,10 @@ cat /etc/fstab
 #and regenerate: sudo mkinitcpio -P linux
 
 #Tune date and time. 'timedatectl list-timezones' for other variants 
-ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localetime
 hwclock --systohc
+ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localetime
 timedatectl set-ntp true
+date
 
 #Uncomment en_US.UTF-8 only and generate locales
 sed -i 's/#en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen && locale-gen
@@ -97,27 +99,27 @@ grub-mkconfig -o /boot/grub/grub.cfg
 #Add user login in system
 useradd -mG wheel $MAIN_USER
 passwd $MAIN_USER
-#Sudo
-echo "$MAIN_USER ALL=(ALL) ALL" >> /etc/sudoers.d/$MAIN_USER
+#Sudo activating
+echo "%wheel ALL=(ALL) ALL" > /etc/sudoers.d/wheelgroup
 
 #Set network.
 pacman -S networkmanager
 systemctl enable NetworkManager
 
-#Optional. 
+#Optional 
 pacman -S openssh
 systemctl enable sshd
 
 #Install and tune zram 2GB
 pacman -S zram-generator
-printf "[zram0]\ncompression-algorithm = zstd\nzram-fraction = 0.5\nmax-zram-size = 2048" >> /etc/systemd/zram-generator.conf
+printf "[zram0]\ncompression-algorithm = zstd\nzram-fraction = 1\nmax-zram-size = 2048" >> /etc/systemd/zram-generator.conf
 
 
 exit
 #target id busy is normal
 umount -a
 
-#For removing flashstick
+#For remove a flashstick
 poweroff
 
 #Boot your machine and login as normal user
@@ -128,20 +130,25 @@ sudo pacman -S gdm gnome gnome-tweaks gnome-software-packagekit-plugin gnome-ext
 sudo systemctl enable --now gdm
 
 #pikaur - AUR helper, smallest one
-sudo pacman -S --needed git
-git clone https://aur.archlinux.org/pikaur.git
-cd pikaur && makepkg -fsri && cd .. && rm -rf pikaur
+#sudo pacman -S --needed git
+#git clone https://aur.archlinux.org/pikaur.git
+#cd pikaur && makepkg -fsri && cd .. && rm -rf pikaur
 
-#Install timeshift
-sudo pikaur -S timeshift timeshift-autosnap 
+#Install timeshift and timeshift-autosnap
+sudo pacman -S timeshift 
+git clone https://aur.archlinux.org/timeshift-autosnap.git
+cd timeshift-autosnap && makepkg -fsri && cd .. && rm -fr timeshift-autosnap
 
 #Install grub-btrfs
 sudo pacman -S grub-btrfs
 sudo grub-mkconfig -o /boot/grub/grub.cfg
-#Add hooks
-sudo nano /etc/mkinitcpio.conf
+#Add hooks for boot in read only. Works with separate @var only
+#sudo nano /etc/mkinitcpio.conf
 #HOOKS=( ... grub-btrfs-overlayfs)
-sudo mkinitcpio -P
+#sudo mkinitcpio -P
+
+#Check everything and create first snapshot
+sudo timeshift-autosnap
 
 #reboot and take a look on grub menu.
 
@@ -153,6 +160,11 @@ sudo pacman -Syu
 
 #console helpers
 sudo pikaur -S htop mc ncdu inxi micro
+
+#reflector
+pacman -S reflector
+reflector --verbose -l 3 -p https --sort rate --save /etc/pacman.d/mirrorlist
+systemctl enable reflector.timer
 
 #Bonus tuning (russian):
 #https://docs.google.com/document/d/1IjTxl7LaPKJyRoLpGEhm4ptBhob_jRgLLQpMugS7qe8/edit
