@@ -47,8 +47,8 @@ umount /mnt
 mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@ /dev/sda1 /mnt
 #mkdir -p /mnt/{home,var}
 mkdir /mnt/home
-#mount -o noatime,compress=zstd,space_cache=2,discard=async,subvol=@home /dev/sda1 /mnt/home
-mount -o noatime,compress=zstd,space_cache=2,discard=async,subvol=@var /dev/sda1 /mnt/var
+mount -o noatime,compress=zstd,space_cache=2,discard=async,subvol=@home /dev/sda1 /mnt/home
+#mount -o noatime,compress=zstd,space_cache=2,discard=async,subvol=@var /dev/sda1 /mnt/var
 
 #Check 
 lsblk
@@ -125,6 +125,11 @@ poweroff
 #Boot your machine and login as normal user
 #Don't forget delete in .ssh/known_hosts line for this host: ssh-keygen -R "[localhost]:2222"
 
+#reflector
+sudo pacman -S reflector
+sudo reflector --verbose -l 3 -p https --sort rate --save /etc/pacman.d/mirrorlist
+sudo systemctl enable reflector.timer
+
 #GNOME because a lot of gtk packages will be install with Timeshift
 sudo pacman -S gdm gnome gnome-tweaks gnome-software-packagekit-plugin gnome-extra xorg 
 sudo systemctl enable --now gdm
@@ -135,7 +140,10 @@ sudo systemctl enable --now gdm
 #cd pikaur && makepkg -fsri && cd .. && rm -rf pikaur
 
 #Install timeshift and timeshift-autosnap
-sudo pacman -S timeshift 
+sudo pacman -S --needed git
+git clone https://aur.archlinux.org/timeshift.git
+cd timeshift && makepkg -fsri && cd .. && rm -fr timeshift
+
 git clone https://aur.archlinux.org/timeshift-autosnap.git
 cd timeshift-autosnap && makepkg -fsri && cd .. && rm -fr timeshift-autosnap
 
@@ -161,10 +169,6 @@ sudo pacman -Syu
 #console helpers
 sudo pikaur -S htop mc ncdu inxi micro
 
-#reflector
-pacman -S reflector
-reflector --verbose -l 3 -p https --sort rate --save /etc/pacman.d/mirrorlist
-systemctl enable reflector.timer
 
 #Bonus tuning (russian):
 #https://docs.google.com/document/d/1IjTxl7LaPKJyRoLpGEhm4ptBhob_jRgLLQpMugS7qe8/edit
