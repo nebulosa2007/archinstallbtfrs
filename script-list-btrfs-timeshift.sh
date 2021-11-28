@@ -40,16 +40,16 @@ btrfs subvolume create @home
 #Check if it is everything ok? Should be "@ @home @var"
 ls
 #leave directory for successful umount
-cd
-umount /mnt
+cd && umount /mnt
 
 #remount subvolumes. Options for SSD
 mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@ /dev/sda1 /mnt
-#mkdir -p /mnt/{home,var}
 mkdir /mnt/home
-mount -o noatime,compress=zstd,space_cache=2,discard=async,subvol=@home /dev/sda1 /mnt/home
-#mount -o noatime,compress=zstd,space_cache=2,discard=async,subvol=@var /dev/sda1 /mnt/var
+#Prevent making subvolumes by systemd
+#https://bbs.archlinux.org/viewtopic.php?id=260291
+mkdir -p /mnt/var/lib/{portables,machines}
 
+mount -o noatime,compress=zstd,space_cache=2,discard=async,subvol=@home /dev/sda1 /mnt/home
 #Check 
 lsblk
 
@@ -94,6 +94,9 @@ grub-install --target=i386-pc --recheck /dev/sda
 #for EFI:
 #pacman -S efibootmgr
 #grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+
+#Optional
+#echo "GRUB_DISABLE_OS_PROBER=false" >> /etc/default/grub 
 grub-mkconfig -o /boot/grub/grub.cfg
 
 #Add user login in system
@@ -101,6 +104,10 @@ useradd -mG wheel $MAIN_USER
 passwd $MAIN_USER
 #Sudo activating
 echo "%wheel ALL=(ALL) ALL" > /etc/sudoers.d/wheelgroup
+
+#Install and tune zram 2GB
+pacman -S zram-generator
+printf "[zram0]\ncompression-algorithm = zstd\nzram-fraction = 1\nmax-zram-size = 2048" >> /etc/systemd/zram-generator.conf
 
 #Set network.
 pacman -S networkmanager
@@ -110,13 +117,9 @@ systemctl enable NetworkManager
 pacman -S openssh
 systemctl enable sshd
 
-#Install and tune zram 2GB
-pacman -S zram-generator
-printf "[zram0]\ncompression-algorithm = zstd\nzram-fraction = 1\nmax-zram-size = 2048" >> /etc/systemd/zram-generator.conf
-
 
 exit
-#target id busy is normal
+#target is busy - it's normal
 umount -a
 
 #For remove a flashstick
@@ -130,22 +133,25 @@ sudo pacman -S reflector
 sudo reflector --verbose -l 3 -p https --sort rate --save /etc/pacman.d/mirrorlist
 sudo systemctl enable reflector.timer
 
+sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
+
 #GNOME because a lot of gtk packages will be install with Timeshift
 sudo pacman -S gdm gnome gnome-tweaks gnome-software-packagekit-plugin gnome-extra xorg 
 sudo systemctl enable --now gdm
 
 #pikaur - AUR helper, smallest one
-#sudo pacman -S --needed git
-#git clone https://aur.archlinux.org/pikaur.git
-#cd pikaur && makepkg -fsri && cd .. && rm -rf pikaur
+sudo pacman -S --needed git
+git clone https://aur.archlinux.org/pikaur.git
+cd pikaur && makepkg -fsri && cd .. && rm -rf pikaur
 
 #Install timeshift and timeshift-autosnap
-sudo pacman -S --needed git
-git clone https://aur.archlinux.org/timeshift.git
-cd timeshift && makepkg -fsri && cd .. && rm -fr timeshift
-
-git clone https://aur.archlinux.org/timeshift-autosnap.git
-cd timeshift-autosnap && makepkg -fsri && cd .. && rm -fr timeshift-autosnap
+#sudo pacman -S --needed git
+#git clone https://aur.archlinux.org/timeshift.git
+#cd timeshift && makepkg -fsri && cd .. && rm -fr timeshift
+#
+#git clone https://aur.archlinux.org/timeshift-autosnap.git
+#cd timeshift-autosnap && makepkg -fsri && cd .. && rm -fr timeshift-autosnap
+sudo pikaur -S timeshift timeshift-autosnap
 
 #Install grub-btrfs
 sudo pacman -S grub-btrfs
