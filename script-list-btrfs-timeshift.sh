@@ -8,8 +8,8 @@
 #or in Oracle VM: Settings-Network-Advanced-Port Forwarding: Protocol: TCP, Host Port:2222, Guset IP 10.0.2.15 (check 'ip a' on guest installation), Guest Port:22
 #On a host machine: ssh root@localhost -p 2222
 
-$MACHINE_NAME="virtarch"
-$MAIN_USER="nebulosa"
+MACHINE_NAME="virtarch"
+MAIN_USER="nebulosa"
 
 #Check internet connection
 ip a
@@ -28,7 +28,7 @@ cfdisk /dev/sda
 #mount /dev/sda1 /mnt/boot
 
 #formating one partition in my case, with EFI it will be sda2
-mkfs.btrfs /dev/sda1
+mkfs.btrfs /dev/sda1 -L $MACHINE_NAME
 
 #making btrfs subvolumes
 mount /dev/sda1 /mnt
@@ -136,7 +136,7 @@ sudo systemctl enable reflector.timer
 sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
 
 #GNOME because a lot of gtk packages will be install with Timeshift
-sudo pacman -S gdm gnome gnome-tweaks gnome-software-packagekit-plugin gnome-extra xorg 
+sudo pacman -S gdm gnome gnome-tweaks gnome-software-packagekit-plugin gnome-extra xorg arc-icon-theme arc-gtk-theme xdg-user-dirs
 sudo systemctl enable --now gdm
 
 #pikaur - AUR helper, smallest one
