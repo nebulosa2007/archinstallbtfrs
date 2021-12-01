@@ -144,39 +144,22 @@ sudo pacman -S --needed git
 git clone https://aur.archlinux.org/pikaur.git
 cd pikaur && makepkg -fsri && cd .. && rm -rf pikaur
 
-#Install timeshift and timeshift-autosnap
+#Install timeshift
 #sudo pacman -S --needed git
 #git clone https://aur.archlinux.org/timeshift.git
 #cd timeshift && makepkg -fsri && cd .. && rm -fr timeshift
-#
-#git clone https://aur.archlinux.org/timeshift-autosnap.git
-#cd timeshift-autosnap && makepkg -fsri && cd .. && rm -fr timeshift-autosnap
-sudo pikaur -S timeshift timeshift-autosnap
+#or 
+sudo pikaur -S timeshift
 
 #Install grub-btrfs
 sudo pacman -S grub-btrfs
 sudo grub-mkconfig -o /boot/grub/grub.cfg
-#Add hooks for boot in read only. Works with separate @var only
-#sudo nano /etc/mkinitcpio.conf
-#HOOKS=( ... grub-btrfs-overlayfs)
-#sudo mkinitcpio -P
 
+#reboot and take a look on grub menu
+
+#git clone https://aur.archlinux.org/timeshift-autosnap.git
+#cd timeshift-autosnap && makepkg -fsri && cd .. && rm -fr timeshift-autosnap
+#or
+sudo pikaur -S timeshift-autosnap
 #Check everything and create first snapshot
 sudo timeshift-autosnap
-
-#reboot and take a look on grub menu.
-
-
-## INSTALLING OTHER SOFT
-
-#Upgrade system
-sudo pacman -Syu
-
-#console helpers
-sudo pikaur -S htop mc ncdu inxi micro
-
-
-#Bonus tuning (russian):
-#https://docs.google.com/document/d/1IjTxl7LaPKJyRoLpGEhm4ptBhob_jRgLLQpMugS7qe8/edit
-
-#to be continued...
