@@ -5,7 +5,8 @@
 sudo pacman -Syu
 
 #console helpers
-sudo pikaur -S htop mc ncdu inxi micro
+sudo pikaur -S htop mc ncdu inxi micro ranger trash bat lsd bpytop tmux
+# speedread
 
 #Optional old nvidia drivers
 sudo pikaur nvidia-340xx-dkms
