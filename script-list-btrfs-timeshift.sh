@@ -8,18 +8,26 @@
 #or in Oracle VM: Settings-Network-Advanced-Port Forwarding: Protocol: TCP, Host Port:2222, Guset IP 10.0.2.15 (check 'ip a' on guest installation), Guest Port:22
 #On a host machine: ssh root@localhost -p 2222
 
-MACHINE_NAME="virtarch"
-MAIN_USER="nebulosa"
+#Highly recommended through ssh
+#main commands:
+# tmux detach
+# tmux ls
+# tmux attach or tmux attach -t session1 
+tmux
 
 #Check internet connection
 ip a
-ping -c2 1.1.1.1
+ping -c2 1.1.1.1 && ping -c2 nic.ru
 
 #Check needed disks, in my case this is /dev/sda - only one disk
 lsblk
 
-#partition disk, in my case BIOS machine: dos, primary, bootable, all space - one partition.
+#partition disk, in my case BIOS machine: dos, primary, bootable, other space round 10GB - one partition, leave some free space for SSD long live. 
+#ex. 232,9GB disk: 230Gb sda1, 2,9GB - free space, ~10%.
+
 #for EFI: gpt, first partition should be efi, 300Mb, ef00 type, all other space - one partition.
+#for delete boot table 
+#gdisk /dev/sda #x, then z, y, y.
 cfdisk /dev/sda
 
 #for EFI
@@ -28,7 +36,8 @@ cfdisk /dev/sda
 #mount /dev/sda1 /mnt/boot
 
 #formating one partition in my case, with EFI it will be sda2
-mkfs.btrfs /dev/sda1 -L $MACHINE_NAME
+#you may add -f: force format, -L virtarch - for label 
+mkfs.btrfs /dev/sda1
 
 #making btrfs subvolumes
 mount /dev/sda1 /mnt
@@ -53,6 +62,7 @@ mount -o noatime,compress=zstd,space_cache=2,discard=async,subvol=@home /dev/sda
 #Check 
 lsblk
 
+sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
 #Install archlinux base. Standard linux kernel. For AMD - amd-ucode instead intel-ucode
 pacstrap /mnt base base-devel linux linux-firmware linux-headers intel-ucode btrfs-progs grub
 
@@ -64,6 +74,10 @@ arch-chroot /mnt
 
 
 ##INSIDE CHROOT
+
+#set variables
+M=virtarch
+U=nebulosa
 
 #Double check fstab!
 cat /etc/fstab
@@ -83,8 +97,9 @@ sed -i 's/#en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen && locale-gen
 echo "LANG=en_US.UTF-8" >> /etc/locale.conf
 
 #Set machine name. "virtarch" in my case.
-echo "$MACHINE_NAME" >> /etc/hostname
-printf "127.0.0.1 localhost\n::1       localhost\n127.0.0.1 $MACHINE_NAME.localhost $MACHINE_NAME" >> /etc/hosts
+echo $M >> /etc/hostname
+printf "127.0.0.1 localhost\n::1       localhost\n127.0.0.1 $M.localhost $M\n" >> /etc/hosts
+cat /etc/hostname /etc/hosts
 
 #Set root password. CHANGE FOR YOUR OWN
 echo root:password | chpasswd
@@ -100,8 +115,8 @@ grub-install --target=i386-pc --recheck /dev/sda
 grub-mkconfig -o /boot/grub/grub.cfg
 
 #Add user login in system
-useradd -mG wheel $MAIN_USER
-passwd $MAIN_USER
+useradd -mG wheel $U
+passwd $U
 #Sudo activating
 echo "%wheel ALL=(ALL) ALL" > /etc/sudoers.d/wheelgroup
 
