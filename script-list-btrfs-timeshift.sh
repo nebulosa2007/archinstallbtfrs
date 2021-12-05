@@ -16,7 +16,7 @@
 tmux
 
 #Check internet connection
-ip a
+ip  -с a
 ping -c2 1.1.1.1 && ping -c2 nic.ru
 
 #Check needed disks, in my case this is /dev/sda - only one disk
@@ -111,7 +111,8 @@ grub-install --target=i386-pc --recheck /dev/sda
 #grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 
 #Optional
-#echo "GRUB_DISABLE_OS_PROBER=false" >> /etc/default/grub 
+#echo "GRUB_DISABLE_OS_PROBER=false" >> /etc/default/grub
+#sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=0/' /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg
 
 #Add user login in system
@@ -132,10 +133,11 @@ systemctl enable NetworkManager
 pacman -S openssh
 systemctl enable sshd
 
+systemctl enable fstrim.timer
+systemctl enable avahi-daemon
 
 exit
-#target is busy - it's normal
-umount -a
+umount  -R /mnt
 
 #For remove a flashstick
 poweroff
