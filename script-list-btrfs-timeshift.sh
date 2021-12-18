@@ -91,10 +91,10 @@ ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localetime
 timedatectl set-ntp true
 date
 
-#Uncomment en_US.UTF-8 only and generate locales
-sed -i 's/#en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen && locale-gen
+#Uncomment en_GB.UTF-8 only and generate locales
+sed -i 's/#en_GB.UTF-8/en_GB.UTF-8/' /etc/locale.gen && locale-gen
 #Set locales for other GUI programs
-echo "LANG=en_US.UTF-8" >> /etc/locale.conf
+echo "LANG=en_GB.UTF-8" >> /etc/locale.conf
 
 #Set machine name. "virtarch" in my case.
 echo $M >> /etc/hostname
