@@ -121,10 +121,6 @@ passwd $U
 #Sudo activating
 echo "%wheel ALL=(ALL) ALL" > /etc/sudoers.d/wheelgroup
 
-#Install and tune zram 2GB
-pacman -S zram-generator
-printf "[zram0]\ncompression-algorithm = zstd\nzram-fraction = 1\nmax-zram-size = 2048" >> /etc/systemd/zram-generator.conf
-
 #Set network.
 pacman -S networkmanager
 systemctl enable NetworkManager
@@ -161,22 +157,26 @@ sudo pacman -S --needed git
 git clone https://aur.archlinux.org/pikaur.git
 cd pikaur && makepkg -fsri && cd .. && rm -rf pikaur
 
+#Install zramd
+pikaur zramd
+sudo systemctl enable --now zramd
+
 #Install timeshift
 #sudo pacman -S --needed git
 #git clone https://aur.archlinux.org/timeshift.git
 #cd timeshift && makepkg -fsri && cd .. && rm -fr timeshift
 #or 
-sudo pikaur -S timeshift
+pikaur -S timeshift
+
+#git clone https://aur.archlinux.org/timeshift-autosnap.git
+#cd timeshift-autosnap && makepkg -fsri && cd .. && rm -fr timeshift-autosnap
+#or
+pikaur -S timeshift-autosnap
+#Check everything and create first snapshot
+sudo timeshift-autosnap
 
 #Install grub-btrfs
 sudo pacman -S grub-btrfs
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 
 #reboot and take a look on grub menu
-
-#git clone https://aur.archlinux.org/timeshift-autosnap.git
-#cd timeshift-autosnap && makepkg -fsri && cd .. && rm -fr timeshift-autosnap
-#or
-sudo pikaur -S timeshift-autosnap
-#Check everything and create first snapshot
-sudo timeshift-autosnap
