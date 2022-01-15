@@ -119,7 +119,7 @@ grub-mkconfig -o /boot/grub/grub.cfg
 useradd -mG wheel $U
 passwd $U
 #Sudo activating
-echo "%wheel ALL=(ALL) ALL" > /etc/sudoers.d/wheelgroup
+sed -i 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 
 #Set network.
 pacman -S networkmanager
