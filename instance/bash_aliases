@@ -1,0 +1,45 @@
+alias openports="sudo ss -ntulp"
+alias getnews="pikaur -Syu"
+alias gethash="tr -dc 'a-z0-9' < /dev/urandom | dd bs=1 count=32 2>/dev/null && echo"
+alias banstatus="sudo iptables -L -n | grep DROP | less"
+
+alias Install="pikaur -S"
+alias Update="pikaur -Su"
+alias Upgrade="pikaur -Syu"
+alias Search="pikaur -Ss"
+alias Purge="pikaur -Rsc"
+alias Clean="pikaur -Sc"
+
+alias Sstart="sudo systemctl start"
+alias Sstop="sudo systemctl stop"
+alias Senable="sudo systemctl enable"
+alias Sdisable="sudo systemctl disable"
+alias Sstatus="sudo systemctl status"
+alias Srestart="sudo systemctl restart"
+alias Stimers="sudo systemctl list-timers"
+alias Slist="systemctl list-units --type=service"
+
+alias cp="cp -iv"
+alias mv="mv -iv"
+alias rm="rm -iv"
+alias x="exit"
+alias grep="grep --color=auto"
+alias egrep="egrep --color=auto"
+alias fgrep="fgrep --color=auto"
+
+backup () { cp "$1"{,.backup};}
+sbackup () { sudo cp "$1"{,.backup};}
+pd () { sudo diff -y --suppress-common-lines "$1"{,.pacnew};}
+
+alias baupdate=". ~/.bash_aliases"
+alias bpupdate=". ~/.bash_profile"
+alias brupdate=". ~/.bashrc"
+
+alias sc='echo -e "Y\nY" | sh ~/instance/scripts/cleansystem.sh'
+alias boottime="sudo systemd-analyze&&sudo systemd-analyze blame --no-pager"
+alias tb="nc termbin.com 9999"
+alias umirror="sudo reflector --verbose -l 5 -p https --sort rate --save /etc/pacman.d/mirrorlist"
+alias age="~/instance/scripts/systemage.sh"
+alias ustat="watch -n 10 ~/instance/scripts/serverstatus.sh"
+alias mc="EDITOR=micro mc"
+alias whatsnew="find / 2>/dev/null | grep pacnew"
