@@ -3,7 +3,7 @@ alias getnews="pikaur -Syu"
 alias gethash="tr -dc 'a-z0-9' < /dev/urandom | dd bs=1 count=32 2>/dev/null && echo"
 alias banstatus="sudo iptables -L -n | grep DROP | less"
 
-alias Install="pikaur -S"
+Install () { pikaur -S $1 || pikaur $1; }
 alias Update="pikaur -Su"
 alias Upgrade="pikaur -Syu"
 alias Search="pikaur -Ss"
