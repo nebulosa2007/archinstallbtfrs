@@ -1,11 +1,15 @@
 
 ## INSTALLING OTHER SOFT
 
+#set variables
+M=virtarch
+U=nebulosa
+
 #Upgrade system
 pikaur -Syu
 
 #console helpers
-pikaur -S htop mc ncdu inxi micro ranger trash bat lsd bpytop tmux
+pikaur -S htop mc ncdu inxi micro ranger trash bat lsd bpytop tmux netcat
 # speedread
 
 #Optional old nvidia drivers
@@ -34,5 +38,10 @@ sudo systemctl enable --now cups.service
 
 #Bonus tuning (russian):
 #https://docs.google.com/document/d/1IjTxl7LaPKJyRoLpGEhm4ptBhob_jRgLLQpMugS7qe8/edit
+
+#Install instance project
+ln -s /home/$U/instance/bash_history /home/$U/.bash_history
+ln -s /home/$U/instance/bash_aliases /home/$U/.bash_aliases
+rm /home/$U/.bashrc && ln -s /home/$U/instance/bashrc /home/$U/.bashrc
 
 #to be continued...
