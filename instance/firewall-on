@@ -1,0 +1,54 @@
+# Flush all chains
+#/sbin/iptables --flush
+
+# Allow unlimited traffic on the loopback interface
+#/sbin/iptables -A INPUT -i lo -j ACCEPT
+#/sbin/iptables -A OUTPUT -o lo -j ACCEPT
+
+# Set default policies
+#/sbin/iptables --policy INPUT DROP
+#/sbin/iptables --policy OUTPUT DROP
+#/sbin/iptables --policy FORWARD DROP
+
+# Previously initiated and accepted exchanges bypass rule checking
+# Allow unlimited outbound traffic
+#/sbin/iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+#/sbin/iptables -A OUTPUT -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+
+#Ratelimit SSH for attack protection
+#/sbin/iptables -A INPUT -p tcp --dport 22 -m state --state NEW -m recent --update --seconds 60 --hitcount 4 -j DROP
+#/sbin/iptables -A INPUT -p tcp --dport 22 -m state --state NEW -m recent --set
+#/sbin/iptables -A INPUT -p tcp --dport 22 -m state --state NEW -j ACCEPT
+
+# Allow certain ports to be accessible from the outside
+#/sbin/iptables -A INPUT -p tcp --dport 25565 -m state --state NEW -j ACCEPT  #Minecraft
+#/sbin/iptables -A INPUT -p tcp --dport 8123 -m state --state NEW -j ACCEPT   #Dynmap plugin
+
+#sslh
+#/sbin/iptables -A INPUT -p tcp --dport 443 -m state --state NEW -j ACCEPT   # https
+
+# Wireguard
+#/sbin/iptables -A INPUT -p udp --dport 3963 -m state --state NEW -j ACCEPT
+
+# enable sslh, shadow proxy, wireguard
+#sudo iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+#sudo iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+#sudo iptables -A INPUT -p tcp --dport 1194 -j ACCEPT
+#sudo iptables -A INPUT -p tcp --dport 2812 -j ACCEPT
+#sudo iptables -A INPUT -p tcp --dport 8388 -j ACCEPT
+#sudo iptables -A INPUT -p udp --dport 3963 -j ACCEPT
+#sudo iptables -A INPUT -p udp --dport 8388 -j ACCEPT
+#sudo ip6tables -P INPUT DROP
+#sudo ip6tables -P FORWARD DROP
+#sudo ip6tables -P OUTPUT DROP
+
+# Allow pinging of your server
+#/sbin/iptables -A INPUT -p icmp --icmp-type 8 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+
+
+# Drop all other traffic
+#/sbin/iptables -A INPUT -j DROP
+
+
+#sudo systemctl enable iptables.service
+#sudo iptables-save | sudo tee /etc/iptables/iptables.rules
