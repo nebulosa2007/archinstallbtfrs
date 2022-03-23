@@ -37,7 +37,7 @@ pikaur -S cups
 sudo systemctl enable --now cups.service
 
 #Bonus tuning (russian):
-#https://docs.google.com/document/d/1IjTxl7LaPKJyRoLpGEhm4ptBhob_jRgLLQpMugS7qe8/edit
+#https://github.com/ventureoo/ARU
 
 #Install instance project
 ln -s /home/$U/instance/bash_history /home/$U/.bash_history

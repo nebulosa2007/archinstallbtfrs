@@ -1,5 +1,5 @@
 alias openports="sudo ss -ntulp"
-alias getnews="pikaur -Syu"
+alias getnews="echo; echo -n ':: Mirror: '; grep -m1 Server /etc/pacman.d/mirrorlist | cut -d"/" -f3; echo; pikaur -Syu"
 alias gethash="tr -dc 'a-z0-9' < /dev/urandom | dd bs=1 count=32 2>/dev/null && echo"
 alias banstatus="sudo iptables -L -n | grep DROP | less"
 
