@@ -119,7 +119,7 @@ grub-mkconfig -o /boot/grub/grub.cfg
 useradd -mG wheel $U
 passwd $U
 #Sudo activating
-sed -i 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
+sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 
 #Set network.
 pacman -S networkmanager
@@ -130,6 +130,7 @@ pacman -S openssh
 systemctl enable sshd
 
 systemctl enable fstrim.timer
+pacman -S avahi
 systemctl enable avahi-daemon
 
 exit

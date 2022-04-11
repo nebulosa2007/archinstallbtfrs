@@ -35,7 +35,7 @@ alias baupdate=". ~/.bash_aliases"
 alias bpupdate=". ~/.bash_profile"
 alias brupdate=". ~/.bashrc"
 
-alias sc='echo -e "Y\nY" | sh ~/instance/scripts/cleansystem.sh'
+alias sc='echo -e "Y\nY" | sh ~/instance/scripts/clean.sh'
 alias boottime="sudo systemd-analyze&&sudo systemd-analyze blame --no-pager"
 alias tb="nc termbin.com 9999"
 alias umirror="sudo reflector --verbose -l 5 -p https --sort rate --save /etc/pacman.d/mirrorlist"
