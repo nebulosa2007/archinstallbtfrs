@@ -40,7 +40,7 @@ sudo systemctl enable --now cups.service
 #https://github.com/ventureoo/ARU
 
 #Install instance project
-ln -s /home/$U/instance/bash_history /home/$U/.bash_history
+rm /home/$U/.bash_history && ln -s /home/$U/instance/bash_history /home/$U/.bash_history
 ln -s /home/$U/instance/bash_aliases /home/$U/.bash_aliases
 rm /home/$U/.bashrc && ln -s /home/$U/instance/bashrc /home/$U/.bashrc
 
