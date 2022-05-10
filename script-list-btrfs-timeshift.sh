@@ -16,7 +16,7 @@
 tmux
 
 #Check internet connection
-ip  -с a
+ip a
 ping -c2 1.1.1.1 && ping -c2 nic.ru
 
 #Check needed disks, in my case this is /dev/sda - only one disk
@@ -46,7 +46,7 @@ btrfs subvolume create @
 btrfs subvolume create @home
 #btrfs subvolume create @var
 
-#Check if it is everything ok? Should be "@ @home @var"
+#Check if it is everything ok? Should be "@ @home"
 ls
 #leave directory for successful umount
 cd && umount /mnt
@@ -56,13 +56,14 @@ mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@ /dev/sda1 /
 mkdir /mnt/home
 #Prevent making subvolumes by systemd
 #https://bbs.archlinux.org/viewtopic.php?id=260291
-mkdir -p /mnt/var/lib/{portables,machines}
+mkdir -p /mnt/var/lib/{portables,machines,docker}
 
 mount -o noatime,compress=zstd,space_cache=2,discard=async,subvol=@home /dev/sda1 /mnt/home
 #Check 
 lsblk
 
 sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
+sed -i 's/#NoExtract   =/NoExtract   = usr\/share\/man\/* usr\/share\/help\/* usr\/share\/locale\/* !usr\/share\/locale\/en_GB* !usr\/share\/locale\/locale.alias/' /etc/pacman.conf
 #Install archlinux base. Standard linux kernel. For AMD - amd-ucode instead intel-ucode
 pacstrap /mnt base base-devel linux linux-firmware linux-headers intel-ucode btrfs-progs grub
 

@@ -3,7 +3,7 @@
 df -h | egrep  "[s|v]da"
 sudo pacman -Rsn $(pacman -Qdtq)
 sudo pacman -Scc
-[ -x /usr/bin/localepurge ]; /usr/bin/localepurge
+[ -x /usr/bin/localepurge ]; sudo /usr/bin/localepurge
 
 
 sudo journalctl --disk-usage
