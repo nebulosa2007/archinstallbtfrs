@@ -1,0 +1,36 @@
+alias openports="sudo netstat -ntulp"
+alias getnews="sudo apt update && sudo apt upgrade"
+alias gethash="tr -dc 'a-zA-Z0-9' < /dev/urandom | dd bs=1 count=32 2>/dev/null && echo"
+
+alias Install="sudo apt install"
+alias Update="sudo apt update"
+alias Upgrade="sudo apt upgrade"
+alias Search="apt search"
+alias Autoremove="sudo apt autoremove"
+alias Autoclean="sudo apt autoclean"
+alias Purge="sudo apt purge"
+alias Clean="sudo apt clean"
+
+alias Sstart="sudo systemctl start"
+alias Sstop="sudo systemctl stop"
+alias Senable="sudo systemctl enable"
+alias Sdisable="sudo systemctl disable"
+alias Sstatus="sudo systemctl status"
+
+
+alias cp="cp -iv"
+alias mv="mv -iv"
+alias rm="rm -iv"
+alias x="exit"
+
+backup () { cp "$1"{,.backup};}
+sbackup () { sudo cp "$1"{,.backup};}
+
+alias baupdate=". ~/.bash_aliases"
+alias bpupdate=". ~/.bash_profile"
+alias brupdate=". ~/.bashrc"
+
+alias sc="sh /home/nebulosa/instance/scripts/cleansystem.sh"
+alias boottime="sudo systemd-analyze&&sudo systemd-analyze blame --no-pager"
+alias tb="nc termbin.com 9999"
+alias mc="EDITOR=micro mc"
