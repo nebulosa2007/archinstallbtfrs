@@ -26,8 +26,7 @@ lsblk
 #ex. 232,9GB disk: 230Gb sda1, 2,9GB - free space, ~10%.
 
 #for EFI: gpt, first partition should be efi, 300Mb, ef00 type, all other space - one partition.
-#for delete boot table 
-#gdisk /dev/sda #x, then z, y, y.
+#for delete boot table add -z
 cfdisk /dev/sda
 
 #for EFI
@@ -44,7 +43,6 @@ mount /dev/sda1 /mnt
 cd /mnt
 btrfs subvolume create @
 btrfs subvolume create @home
-#btrfs subvolume create @var
 
 #Check if it is everything ok? Should be "@ @home"
 ls
@@ -63,12 +61,13 @@ mount -o noatime,compress=zstd,space_cache=2,discard=async,subvol=@home /dev/sda
 lsblk
 
 sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
-sed -i 's/#NoExtract   =/NoExtract   = usr\/share\/man\/* usr\/share\/help\/* usr\/share\/locale\/* !usr\/share\/locale\/en_GB* !usr\/share\/locale\/locale.alias/' /etc/pacman.conf
+sed -i 's/#NoExtract   =/NoExtract   = usr\/share\/man\/* usr\/share\/help\/* usr\/share\/locale\/* !usr\/share\/locale\/en_US* !usr\/share\/locale\/locale.alias/' /etc/pacman.conf
 #Install archlinux base. Standard linux kernel. For AMD - amd-ucode instead intel-ucode
 pacstrap /mnt base base-devel linux linux-firmware linux-headers intel-ucode btrfs-progs grub
 
 #generate fstab
 genfstab -U /mnt >> /mnt/etc/fstab
+
 
 #start the party!
 arch-chroot /mnt
@@ -84,18 +83,13 @@ U=nebulosa
 cat /etc/fstab
 
 #On a BTRFS ONLY disk (without separate partition fat for EFI) remove fsck HOOK form /etc/mkinitcpio.conf
-#and regenerate: sudo mkinitcpio -P linux
+#for default preset only in /etc/mkinitcpio.d/linux.preset :  PRESETS=('default')
+#and regenerate: sudo mkinitcpio -P
 
-#Tune date and time. 'timedatectl list-timezones' for other variants 
-hwclock --systohc
-ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localetime
-timedatectl set-ntp true
-date
-
-#Uncomment en_GB.UTF-8 only and generate locales
-sed -i 's/#en_GB.UTF-8/en_GB.UTF-8/' /etc/locale.gen && locale-gen
+#Uncomment en_US.UTF-8 only and generate locales
+sed -i 's/#en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen && locale-gen
 #Set locales for other GUI programs
-echo "LANG=en_GB.UTF-8" >> /etc/locale.conf
+echo "LANG=en_US.UTF-8" >> /etc/locale.conf
 
 #Set machine name. "virtarch" in my case.
 echo $M >> /etc/hostname
@@ -142,6 +136,11 @@ poweroff
 
 #Boot your machine and login as normal user
 #Don't forget delete in .ssh/known_hosts line for this host: ssh-keygen -R "[localhost]:2222"
+
+#Tune date and time. 'timedatectl list-timezones' for other variants
+sudo timedatectl set-timezone Europe/Moscow
+sudo timedatectl set-ntp true
+sudo timedatectl status
 
 #reflector
 sudo pacman -S reflector
