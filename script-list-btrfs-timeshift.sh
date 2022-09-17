@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-## INSTALLATION ARCHLINUX BTRFS ZRAM AND SNAPSHOTS in GRUB method 2
-## no separate volume snapshots for Snapper, Timeshift instead with Gnome
+## INSTALLATION ARCHLINUX BTRFS ZRAM
 
 #You can use headless machine installation through ssh: https://wiki.archlinux.org/title/Install_Arch_Linux_via_SSH
 #For VirtualBox - Nat forwarding: https://www.virtualbox.org/manual/ch06.html#natforward 
@@ -52,11 +51,11 @@ cd && umount /mnt
 #remount subvolumes. Options for SSD
 mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@ /dev/sda1 /mnt
 mkdir /mnt/home
+mount -o noatime,compress=zstd,space_cache=2,discard=async,subvol=@home /dev/sda1 /mnt/home
 #Prevent making subvolumes by systemd
 #https://bbs.archlinux.org/viewtopic.php?id=260291
 mkdir -p /mnt/var/lib/{portables,machines,docker}
 
-mount -o noatime,compress=zstd,space_cache=2,discard=async,subvol=@home /dev/sda1 /mnt/home
 #Check 
 lsblk
 
@@ -149,17 +148,13 @@ sudo systemctl enable reflector.timer
 
 sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
 
-#GNOME because a lot of gtk packages will be install with Timeshift
-sudo pacman -S gdm gnome gnome-tweaks gnome-software-packagekit-plugin gnome-extra xorg arc-icon-theme arc-gtk-theme xdg-user-dirs
-sudo systemctl enable --now gdm
-
 #pikaur - AUR helper, smallest one
 sudo pacman -S --needed git
 git clone https://aur.archlinux.org/pikaur.git
 cd pikaur && makepkg -fsri && cd .. && rm -rf pikaur
 
 #Install zramd
-pikaur zramd
+pikaur -S zramd
 sudo systemctl enable --now zramd
 
 #Install timeshift
