@@ -19,10 +19,6 @@ sudo usermod -aG uucp,lock $MAIN_USER
 #Youtube tuning -  https://djnapalm.ru/it/kodi/youtube.html
 #SponsorsBlock - https://github.com/siku2/script.service.sponsorblock
 
-#Installing localepurge
-pikaur -S localepurge
-#tune after /etc/locale.nopurge
-
 #Install bluetooth
 pikaur -S bluez bluez-utils
 sudo systemctl enable --now bluetooth
@@ -34,12 +30,6 @@ sudo systemctl enable --now cups.service
 #Bonus tuning (russian):
 #https://github.com/ventureoo/ARU
 
-#Install instance project
-git clone https://github.com/nebulosa2007/archinstallbtfrs.git
-cp -R archinstallbtfrs/instance . && rm -rf archinstallbtfrs
-rm /home/$U/.bash_history; ln -s /home/$U/instance/bash_history /home/$U/.bash_history
-ln -s /home/$U/instance/bash_aliases /home/$U/.bash_aliases
-rm /home/$U/.bashrc && ln -s /home/$U/instance/bashrc /home/$U/.bashrc
 
 #Install docker
 pikaur -S docker
