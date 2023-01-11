@@ -62,7 +62,7 @@ lsblk
 sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
 sed -i 's/#NoExtract   =/NoExtract   = usr\/share\/man\/* usr\/share\/help\/* usr\/share\/locale\/* !usr\/share\/locale\/en_US* !usr\/share\/locale\/locale.alias/' /etc/pacman.conf
 #Install archlinux base. Standard linux kernel. For AMD - amd-ucode instead intel-ucode
-pacstrap /mnt base base-devel linux linux-firmware linux-headers intel-ucode btrfs-progs grub
+pacstrap /mnt base base-devel linux intel-ucode btrfs-progs grub polkit micro iwd linux-firmware #last 2 packages for wi-fi
 
 #generate fstab
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -83,6 +83,8 @@ cat /etc/fstab
 
 #On a BTRFS ONLY disk (without separate partition fat for EFI) remove fsck HOOK form /etc/mkinitcpio.conf
 #for default preset only in /etc/mkinitcpio.d/linux.preset :  PRESETS=('default')
+#sed -i 's/PRESETS=('default' 'fallback')/PRESETS=('default')/' /etc/mkinitcpio.d/linux.preset
+#rm /boot/initramfs-linux-fallback.img
 #and regenerate: sudo mkinitcpio -P
 
 #Uncomment en_US.UTF-8 only and generate locales
@@ -115,9 +117,16 @@ passwd $U
 #Sudo activating
 sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 
-#Set network.
-pacman -S networkmanager
-systemctl enable NetworkManager
+#Set network (DHCP, systemd-networkd)
+#Wired
+printf "[Match]\nName=en*\n\n[Network]\nDHCP=yes\n" > /etc/systemd/network/20-wired.network
+#Wireless
+printf "[Match]\nName=wl*\n\n[Network]\nDHCP=yes\nIgnoreCarrierLoss=3s\n" > /etc/systemd/network/25-wireless.network
+systemctl enable iwd
+
+echo "nameserver 9.9.9.9" > /etc/resolv.conf
+systemctl enable systemd-networkd
+
 
 #Optional 
 pacman -S openssh
@@ -133,6 +142,7 @@ umount  -R /mnt
 #For remove a flashstick
 poweroff
 
+#Wi-fi connection - https://wiki.archlinux.org/title/Iwd#Connect_to_a_network
 #Boot your machine and login as normal user
 #Don't forget delete in .ssh/known_hosts line for this host: ssh-keygen -R "[localhost]:2222"
 
@@ -156,23 +166,3 @@ cd pikaur && makepkg -fsri && cd .. && rm -rf pikaur
 #Install zramd
 pikaur -S zramd
 sudo systemctl enable --now zramd
-
-#Install timeshift
-#sudo pacman -S --needed git
-#git clone https://aur.archlinux.org/timeshift.git
-#cd timeshift && makepkg -fsri && cd .. && rm -fr timeshift
-#or 
-pikaur -S timeshift
-
-#git clone https://aur.archlinux.org/timeshift-autosnap.git
-#cd timeshift-autosnap && makepkg -fsri && cd .. && rm -fr timeshift-autosnap
-#or
-pikaur -S timeshift-autosnap
-#Check everything and create first snapshot
-sudo timeshift-autosnap
-
-#Install grub-btrfs
-sudo pacman -S grub-btrfs
-sudo grub-mkconfig -o /boot/grub/grub.cfg
-
-#reboot and take a look on grub menu
