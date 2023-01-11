@@ -1,15 +1,11 @@
 
 ## INSTALLING OTHER SOFT
 
-#set variables
-M=virtarch
-U=nebulosa
-
 #Upgrade system
 pikaur -Syu
 
 #console helpers
-pikaur -S htop mc ncdu inxi micro ranger tmux netcat
+pikaur -S --needed htop mc ncdu ranger tmux micro
 # speedread trash bat lsd bpytop
 
 #Optional old nvidia drivers
