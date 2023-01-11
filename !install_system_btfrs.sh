@@ -166,6 +166,6 @@ poweroff
 sudo timedatectl set-ntp true
 sudo timedatectl status
 #pikaur - AUR helper, smallest one
-sudo pacman -S --needed git
+sudo pacman -S --needed base-devel git
 git clone https://aur.archlinux.org/pikaur.git
 cd pikaur && makepkg -fsri && cd .. && rm -rf pikaur
