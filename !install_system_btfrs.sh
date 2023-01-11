@@ -163,6 +163,8 @@ poweroff
 #Boot your machine and login as normal user
 #Don't forget delete in .ssh/known_hosts line for this host: ssh-keygen -R "[localhost]:2222"
 
+sudo timedatectl set-ntp true
+sudo timedatectl status
 #pikaur - AUR helper, smallest one
 sudo pacman -S --needed git
 git clone https://aur.archlinux.org/pikaur.git
