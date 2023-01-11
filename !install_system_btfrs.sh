@@ -15,8 +15,7 @@
 tmux
 
 #Check internet connection
-ip a
-ping -c2 1.1.1.1 && ping -c2 nic.ru
+ip -c a && . <(printf 'ping -c1 "%s" >/dev/null && ' 95.217.163.246 archlinux.org)
 
 #Check needed disks, in my case this is /dev/sda - only one disk
 lsblk
@@ -51,7 +50,7 @@ cd && umount /mnt
 #remount subvolumes. Options for SSD
 mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@ /dev/sda1 /mnt
 mkdir /mnt/home
-mount -o noatime,compress=zstd,space_cache=2,discard=async,subvol=@home /dev/sda1 /mnt/home
+mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@home /dev/sda1 /mnt/home
 #Prevent making subvolumes by systemd
 #https://bbs.archlinux.org/viewtopic.php?id=260291
 mkdir -p /mnt/var/lib/{portables,machines,docker}
@@ -62,7 +61,12 @@ lsblk
 sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
 sed -i 's/#NoExtract   =/NoExtract   = usr\/share\/man\/* usr\/share\/help\/* usr\/share\/locale\/* !usr\/share\/locale\/en_US* !usr\/share\/locale\/locale.alias/' /etc/pacman.conf
 #Install archlinux base. Standard linux kernel. For AMD - amd-ucode instead intel-ucode
-pacstrap /mnt base base-devel linux intel-ucode btrfs-progs grub polkit micro iwd linux-firmware #last 2 packages for wi-fi
+pacstrap -K /mnt base base-devel linux intel-ucode btrfs-progs grub polkit micro reflector 
+
+#For wi-fi
+#pacstrap /mnt iwd linux-firmware
+
+cp -i /etc/pacman.conf /mnt/etc/pacman.conf
 
 #generate fstab
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -81,11 +85,18 @@ U=nebulosa
 #Double check fstab!
 cat /etc/fstab
 
+#Time tuning
+ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime && hwclock --systohc
+
+#Set the console keyboard layout
+printf "KEYMAP=ru\nFONT=cyr-sun16\n" > /etc/vconsole.conf
+
 #On a BTRFS ONLY disk (without separate partition fat for EFI) remove fsck HOOK form /etc/mkinitcpio.conf
-#for default preset only in /etc/mkinitcpio.d/linux.preset :  PRESETS=('default')
-#sed -i 's/PRESETS=('default' 'fallback')/PRESETS=('default')/' /etc/mkinitcpio.d/linux.preset
+#for default preset only
+#sed -i "s/PRESETS=('default' 'fallback')/PRESETS=('default')/" /etc/mkinitcpio.d/linux.preset
 #rm /boot/initramfs-linux-fallback.img
-#and regenerate: sudo mkinitcpio -P
+#and regenerate: 
+mkinitcpio -P
 
 #Uncomment en_US.UTF-8 only and generate locales
 sed -i 's/#en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen && locale-gen
@@ -124,16 +135,22 @@ printf "[Match]\nName=en*\n\n[Network]\nDHCP=yes\n" > /etc/systemd/network/20-wi
 printf "[Match]\nName=wl*\n\n[Network]\nDHCP=yes\nIgnoreCarrierLoss=3s\n" > /etc/systemd/network/25-wireless.network
 systemctl enable iwd
 
-echo "nameserver 9.9.9.9" > /etc/resolv.conf
 systemctl enable systemd-networkd
+echo "nameserver 9.9.9.9" > /etc/resolv.conf
 
 
-#Optional 
-pacman -S openssh
-systemctl enable sshd
+#Zram
+echo "zram" > /etc/modules-load.d/zram.conf
+echo "options zram num_devices=1" > /etc/modprobe.d/zram.conf
+echo 'KERNEL=="zram0", ATTR{disksize}="'$(awk '/MemTotal/ {print $2}' /proc/meminfo)'" RUN="/usr/bin/mkswap /dev/zram0", TAG+="systemd"' > /etc/udev/rules.d/99-zram.rules
+echo "/dev/zram0 none swap defaults 0 0" >> /etc/fstab
 
+#Other
+systemctl enable reflector.timer
 systemctl enable fstrim.timer
-pacman -S avahi
+
+pacman -S openssh avahi
+systemctl enable sshd
 systemctl enable avahi-daemon
 
 exit
@@ -146,23 +163,7 @@ poweroff
 #Boot your machine and login as normal user
 #Don't forget delete in .ssh/known_hosts line for this host: ssh-keygen -R "[localhost]:2222"
 
-#Tune date and time. 'timedatectl list-timezones' for other variants
-sudo timedatectl set-timezone Europe/Moscow
-sudo timedatectl set-ntp true
-sudo timedatectl status
-
-#reflector
-sudo pacman -S reflector
-sudo reflector --verbose -l 3 -p https --sort rate --save /etc/pacman.d/mirrorlist
-sudo systemctl enable reflector.timer
-
-sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
-
 #pikaur - AUR helper, smallest one
 sudo pacman -S --needed git
 git clone https://aur.archlinux.org/pikaur.git
 cd pikaur && makepkg -fsri && cd .. && rm -rf pikaur
-
-#Install zramd
-pikaur -S zramd
-sudo systemctl enable --now zramd
