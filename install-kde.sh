@@ -13,6 +13,19 @@ sudo pacman -S xorg-server
 # sudo pacman -S xorg-xinit xterm
 # startx
 
-# Step 2. Install plasma, sddm
-sudo pacman -S plasma-desktop sddm
+# Step 2.
+
+## KDE Desktop minimal
+sudo pacman -S plasma-desktop yakuake dolphin spectacle kate
+sudo pacman -S --asdeps qt5-xmlpatterns plasma-browser-integration plasma-pa
 sudo systemctl enable --now sddm
+
+# Without networkmanager and bluez
+pikaur -S --asdeps powerdevil-light
+
+#Bluetooth support
+sudo pacman -S --asdeps pulseaudio-bluetooth bluedevil
+sudo systemctl enable --now bluetooth
+
+#Android integration
+sudo pacman -S --asdeps kdeconnect sshfs
