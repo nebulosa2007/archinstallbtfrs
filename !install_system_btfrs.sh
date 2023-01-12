@@ -142,7 +142,7 @@ echo "nameserver 9.9.9.9" > /etc/resolv.conf
 #Zram
 echo "zram" > /etc/modules-load.d/zram.conf
 echo "options zram num_devices=1" > /etc/modprobe.d/zram.conf
-echo 'KERNEL=="zram0", ATTR{disksize}="'$(awk '/MemTotal/ {print $2}' /proc/meminfo)'" RUN="/usr/bin/mkswap /dev/zram0", TAG+="systemd"' > /etc/udev/rules.d/99-zram.rules
+echo 'KERNEL=="zram0", ATTR{disksize}="'$(awk '/MemTotal/ {print $2}' /proc/meminfo)'K" RUN="/usr/bin/mkswap /dev/zram0", TAG+="systemd"' > /etc/udev/rules.d/99-zram.rules
 echo "/dev/zram0 none swap defaults 0 0" >> /etc/fstab
 
 #Other
