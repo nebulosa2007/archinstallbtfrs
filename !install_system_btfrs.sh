@@ -158,7 +158,7 @@ poweroff
 #Don't forget delete in .ssh/known_hosts line for this host: ssh-keygen -R "[localhost]:2222"
 
 #Instead of sudo systemctl enable --mow systemd-resolved.service
-echo "nameserver 9.9.9.9" > /etc/resolv.conf
+echo "nameserver 9.9.9.9" | sudo tee -a /etc/resolv.conf
 
 #On a BTRFS ONLY disk (without separate partition fat for EFI) remove fsck HOOK form /etc/mkinitcpio.conf
 #for default preset only
