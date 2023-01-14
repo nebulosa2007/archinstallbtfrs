@@ -92,13 +92,6 @@ ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime && hwclock --systohc
 #Optional, set the console keyboard layout
 #printf "FONT=cyr-sun16\nKEYMAP=ru\n" > /etc/vconsole.conf
 
-#On a BTRFS ONLY disk (without separate partition fat for EFI) remove fsck HOOK form /etc/mkinitcpio.conf
-#for default preset only
-#sed -i "s/PRESETS=('default' 'fallback')/PRESETS=('default')/" /etc/mkinitcpio.d/linux.preset
-#rm /boot/initramfs-linux-fallback.img
-#and regenerate: 
-mkinitcpio -P
-
 #Uncomment en_US.UTF-8 only and generate locales
 sed -i 's/#en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen && locale-gen
 #Set locales for other GUI programs
@@ -163,6 +156,17 @@ poweroff
 #Wi-fi connection - https://wiki.archlinux.org/title/Iwd#Connect_to_a_network
 #Boot your machine and login as normal user
 #Don't forget delete in .ssh/known_hosts line for this host: ssh-keygen -R "[localhost]:2222"
+
+#Instead of sudo systemctl enable --mow systemd-resolved.service
+echo "nameserver 9.9.9.9" > /etc/resolv.conf
+
+#On a BTRFS ONLY disk (without separate partition fat for EFI) remove fsck HOOK form /etc/mkinitcpio.conf
+#for default preset only
+# sed -i "s/PRESETS=('default' 'fallback')/PRESETS=('default')/" /etc/mkinitcpio.d/linux.preset
+# rm /boot/initramfs-linux-fallback.img
+#Optional, set the console keyboard layout
+# printf "FONT=cyr-sun16\nKEYMAP=ru\n" | sudo tee /etc/vconsole.conf
+mkinitcpio -P
 
 #NTP turn on
 sudo timedatectl set-ntp true
