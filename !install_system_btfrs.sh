@@ -2,7 +2,8 @@
 
 ## INSTALLATION ARCHLINUX BTRFS ZRAM
 
-#You can use headless machine installation through ssh: https://wiki.archlinux.org/title/Install_Arch_Linux_via_SSH
+#You can use remote/headless machine installation through ssh: https://wiki.archlinux.org/title/Install_Arch_Linux_via_SSH
+# ssh -o StrictHostKeyChecking=no -o "UserKnownHostsFile /dev/null" root@archiso.lan # (or root@ip_new_arch_install)
 #For VirtualBox - Nat forwarding: https://www.virtualbox.org/manual/ch06.html#natforward 
 #or in Oracle VM: Settings-Network-Advanced-Port Forwarding: Protocol: TCP, Host Port:2222, Guset IP 10.0.2.15 (check 'ip a' on guest installation), Guest Port:22
 #On a host machine: ssh root@localhost -p 2222
