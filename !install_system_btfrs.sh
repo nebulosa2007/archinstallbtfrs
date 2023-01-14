@@ -162,11 +162,11 @@ echo "nameserver 9.9.9.9" | sudo tee -a /etc/resolv.conf
 
 #On a BTRFS ONLY disk (without separate partition fat for EFI) remove fsck HOOK form /etc/mkinitcpio.conf
 #for default preset only
-# sed -i "s/PRESETS=('default' 'fallback')/PRESETS=('default')/" /etc/mkinitcpio.d/linux.preset
-# rm /boot/initramfs-linux-fallback.img
+# sudo sed -i "s/PRESETS=('default' 'fallback')/PRESETS=('default')/" /etc/mkinitcpio.d/linux.preset
+# sudo rm /boot/initramfs-linux-fallback.img
 #Optional, set the console keyboard layout
 # printf "FONT=cyr-sun16\nKEYMAP=ru\n" | sudo tee /etc/vconsole.conf
-mkinitcpio -P
+sudo mkinitcpio -P
 
 #NTP turn on
 sudo timedatectl set-ntp true
