@@ -89,8 +89,8 @@ cat /etc/fstab
 #Time tuning
 ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime && hwclock --systohc
 
-#Set the console keyboard layout
-printf "KEYMAP=ru\nFONT=cyr-sun16\n" > /etc/vconsole.conf
+#Optional, set the console keyboard layout
+#printf "FONT=cyr-sun16\nKEYMAP=ru\n" > /etc/vconsole.conf
 
 #On a BTRFS ONLY disk (without separate partition fat for EFI) remove fsck HOOK form /etc/mkinitcpio.conf
 #for default preset only
