@@ -16,8 +16,8 @@ sudo pacman -S xorg-server
 # Step 2.
 
 ## KDE Desktop minimal
-sudo pacman -S plasma-desktop yakuake dolphin spectacle kate
-sudo pacman -S --asdeps qt5-xmlpatterns plasma-browser-integration plasma-pa
+sudo pacman -S plasma-desktop yakuake dolphin spectacle kate sddm
+sudo pacman -S --asdeps qt5-xmlpatterns plasma-browser-integration plasma-pa sddm-kcm
 # Optinal: time without PM/AM
 # echo "LANG=en_US.UTF-8" | sudo tee /etc/default/locale
 # sudo mkdir /etc/systemd/system/sddm.service.d/ && printf "[Service]\nEnvironmentFile=-/etc/default/locale" | sudo tee /etc/systemd/system/sddm.service.d/10-time.conf && sudo systemctl daemon-reload
