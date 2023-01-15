@@ -89,13 +89,10 @@ cat /etc/fstab
 #Time tuning
 ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime && hwclock --systohc
 
-#Optional, set the console keyboard layout
-#printf "FONT=cyr-sun16\nKEYMAP=ru\n" > /etc/vconsole.conf
-
-#Uncomment en_US.UTF-8 only and generate locales
-sed -i 's/#en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen && locale-gen
+#Uncomment en_GB.UTF-8 only and generate locales
+sed -i 's/#en_GB.UTF-8/en_GB.UTF-8/' /etc/locale.gen && locale-gen
 #Set locales for other GUI programs
-echo "LANG=en_US.UTF-8" >> /etc/locale.conf
+echo "LANG=en_GB.UTF-8" >> /etc/locale.conf
 
 #Set machine name. "virtarch" in my case.
 echo $M >> /etc/hostname
@@ -125,19 +122,18 @@ sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 #Set network (DHCP, systemd-networkd)
 #Wired
 printf "[Match]\nName=en*\n\n[Network]\nDHCP=yes\n" > /etc/systemd/network/20-wired.network
+
 #Wireless
-printf "[Match]\nName=wl*\n\n[Network]\nDHCP=yes\nIgnoreCarrierLoss=3s\n" > /etc/systemd/network/25-wireless.network
-systemctl enable iwd
+# printf "[Match]\nName=wl*\n\n[Network]\nDHCP=yes\nIgnoreCarrierLoss=3s\n" > /etc/systemd/network/25-wireless.network
+# systemctl enable iwd
 
 systemctl enable systemd-networkd
-echo "nameserver 9.9.9.9" > /etc/resolv.conf
-
 
 #Zram
 echo "zram" > /etc/modules-load.d/zram.conf
 echo "options zram num_devices=1" > /etc/modprobe.d/zram.conf
 echo 'KERNEL=="zram0", ATTR{disksize}="'$(awk '/MemTotal/ {print $2}' /proc/meminfo)'K" RUN="/usr/bin/mkswap /dev/zram0", TAG+="systemd"' > /etc/udev/rules.d/99-zram.rules
-echo "/dev/zram0 none swap defaults 0 0" >> /etc/fstab
+echo "/dev/zram0     none     swap     defaults     0     0" >> /etc/fstab
 
 #Other
 systemctl enable reflector.timer
@@ -153,12 +149,14 @@ umount  -R /mnt
 #For remove a flashstick
 poweroff
 
-#Wi-fi connection - https://wiki.archlinux.org/title/Iwd#Connect_to_a_network
+
 #Boot your machine and login as normal user
 #Don't forget delete in .ssh/known_hosts line for this host: ssh-keygen -R "[localhost]:2222"
 
 #Instead of sudo systemctl enable --mow systemd-resolved.service
 echo "nameserver 9.9.9.9" | sudo tee -a /etc/resolv.conf
+sudo systemctl restart systemd-networkd
+#Wi-fi connection - https://wiki.archlinux.org/title/Iwd#Connect_to_a_network
 
 #On a BTRFS ONLY disk (without separate partition fat for EFI) remove fsck HOOK form /etc/mkinitcpio.conf
 #for default preset only
