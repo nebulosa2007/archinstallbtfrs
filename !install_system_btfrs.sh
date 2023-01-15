@@ -174,3 +174,6 @@ sudo timedatectl status
 sudo pacman -S --needed base-devel git
 git clone https://aur.archlinux.org/pikaur.git
 cd pikaur && makepkg -fsri && cd .. && rm -rf pikaur
+
+#Optional: make initial snapshot
+# sudo mount /dev/sda1 /mnt && sudo btrfs subvolume snapshot /mnt/@root /mnt/INIT && sudo umount /mnt
