@@ -23,6 +23,15 @@ sudo pacman -S plasma-desktop qt5-xmlpatterns plasma-browser-integration plasma-
 # echo "LANG=en_US.UTF-8" | sudo tee /etc/default/locale
 # sudo mkdir /etc/systemd/system/sddm.service.d/ && printf "[Service]\nEnvironmentFile=-/etc/default/locale" | sudo tee /etc/systemd/system/sddm.service.d/10-time.conf && sudo systemctl daemon-reload
 
+# Network manager:
+# Disable systemd-networkd and iwd if any:
+# sudo systemctl stop systemd-networkd && sudo systemctl disable systemd-networkd
+# sudo systemctl stop iwd && sudo systemctl disable iwd && sudo pacman -Rsn iwd
+# sudo pacman -S powerdevil plasma-nm
+# sudo systemctl enable --now systemd-resolved
+# sudo systemctl enable --now NetworkManager
+# nmtui
+# OR:
 # Without networkmanager and bluez
 pikaur -S powerdevil-light
 
