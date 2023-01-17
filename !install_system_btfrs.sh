@@ -40,7 +40,7 @@ mkfs.btrfs /dev/sda1
 #making btrfs subvolumes
 mount /dev/sda1 /mnt
 cd /mnt
-btrfs subvolume create @
+btrfs subvolume create @root
 btrfs subvolume create @home
 
 #Check if it is everything ok? Should be "@ @home"
@@ -49,7 +49,7 @@ ls
 cd && umount /mnt
 
 #remount subvolumes. Options for SSD
-mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@ /dev/sda1 /mnt
+mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@root /dev/sda1 /mnt
 mkdir /mnt/home
 mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@home /dev/sda1 /mnt/home
 #Prevent making subvolumes by systemd
