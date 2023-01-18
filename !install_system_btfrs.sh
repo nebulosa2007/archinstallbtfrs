@@ -114,7 +114,7 @@ grub-install --target=i386-pc --recheck /dev/sda
 grub-mkconfig -o /boot/grub/grub.cfg
 
 #Add user login in system
-useradd -mG wheel $U
+useradd -mG wheel,storage $U
 passwd $U
 #Sudo activating
 sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
