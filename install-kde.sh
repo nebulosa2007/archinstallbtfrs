@@ -7,7 +7,7 @@ sudo pacman -S xorg-server
 # lspci -v | grep -A1 -e VGA -e 3D
 # https://wiki.archlinux.org/title/Xorg#Driver_installation
 # ATI + Intel
-# sudo pacman -S xf86-video-ati mesa xf86-video-intel libva-intel-driver  libva-mesa-driver libva-vdpau-driver
+# sudo pacman -S xf86-video-ati mesa mesa-vdpau libva-mesa-driver libva-vdpau-driver xf86-video-intel libva-intel-driver
 # or all of them:
 # sudo pacman -S xorg-drivers
 
