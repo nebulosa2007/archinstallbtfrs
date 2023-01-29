@@ -15,6 +15,15 @@ printf "Section \"ServerFlags\"\n  Option \"IgnoreABI\" \"1\"\nEndSection\n" >> 
 sudo sed -i 's/ kms //' /etc/mkinitcpio.conf
 sudo mkinitcpio -P
 
+#Maximazing Performance:
+pikaur -S ananicy-cpp rng-tools dbus-broker ananicy-rules
+sudo systemctl enable --now ananicy-cpp
+sudo systemctl enable --now rngd
+sudo systemctl enable --now dbus-broker.service
+sudo systemctl --global enable dbus-broker.service
+
+
+
 #Installing Kodi
 pikaur -S kodi libcec
 sudo usermod -aG uucp,lock $MAIN_USER
