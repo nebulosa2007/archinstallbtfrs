@@ -27,9 +27,8 @@ cp -r ~/.pki ~/.local/share/pki && rm -fr ~/.pki && ln -s ~/.local/share/pki ~/.
 
 #Credits: https://ventureo.codeberg.page/source/generic-system-acceleration.html
 #Lower latency due system boot:
-pikaur -S rng-tools dbus-broker
+pikaur -S rng-tools
 sudo systemctl enable --now rngd
-sudo systemctl enable --now dbus-broker.service && sudo systemctl --global enable dbus-broker.service
 
 
 
