@@ -4,6 +4,27 @@
 pikaur -Syu --needed htop mc ncdu ranger tmux micro lsd
 #Optional: pikaur -S --needed speedread trash bat bpytop
 
+
+#Cleaning/rebase apps in home folder:
+#Firefox
+# 1. https://wiki.archlinux.org/title/Firefox/Tweaks
+# 2. move .mozilla folder in a proper place
+cp -r ~/.mozilla ~/.config/mozilla && rm -rf ~/.mozilla && ln -s ~/.config/mozilla ~/.mozilla
+
+#Telegram Desktop
+cp -r ~/.local/share/TelegramDesktop ~/.config/TelegramDesktop && rm -fr ~/.local/share/TelegramDesktop && ln -s ~/.config/TelegramDesktop ~/.local/share/TelegramDesktop
+#Moving cache in proper place
+mkdir -p  ~/.cache/TelegramDesktop && cp -r ~/.config/TelegramDesktop/tdata/user_data ~/.cache/TelegramDesktop/user_data && rm -fr ~/.config/TelegramDesktop/tdata/user_data && ln -s ~/.cache/TelegramDesktop/user_data ~/.config/TelegramDesktop/tdata/user_data
+
+#Youtube Music https://aur.archlinux.org/packages/youtube-music-bin
+#Moving cache in proper place
+cp -r ~/.config/YouTube\ Music/Cache ~/.cache/YouTube\ Music && rm -fr ~/.config/YouTube\ Music/Cache && ln -s ~/.cache/YouTube\ Music ~/.config/YouTube\ Music/Cache
+#Moving .pki in proper place
+cp -r ~/.pki ~/.local/share/pki && rm -fr ~/.pki && ln -s ~/.local/share/pki ~/.pki
+
+
+
+
 #Credits: https://ventureo.codeberg.page/source/generic-system-acceleration.html
 #Lower latency due system boot:
 pikaur -S rng-tools dbus-broker
