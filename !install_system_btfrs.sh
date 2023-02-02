@@ -181,3 +181,4 @@ cd pikaur && makepkg -fsri && cd .. && rm -rf pikaur
 # sudo pacman -Scc && sudo pacman -Rsn $(pacman -Qdtq)
 # sudo journalctl --vacuum-size=5M && sudo journalctl --verify
 # sudo mount /dev/sda1 /mnt && sudo btrfs subvolume snapshot /mnt/@root /mnt/INIT && sudo umount /mnt
+
