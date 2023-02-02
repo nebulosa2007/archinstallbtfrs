@@ -31,6 +31,9 @@ sudo pacman -S plasma-desktop qt5-xmlpatterns plasma-browser-integration plasma-
 # sudo systemctl enable --now systemd-resolved
 # sudo systemctl enable --now NetworkManager
 # nmtui
+# Wireguard with NM:
+# sudo pacman -S wireguard-tools openresolv
+# nmcli connection import type wireguard file Downloads/MyVPN.conf
 # OR:
 # Without networkmanager and bluez
 pikaur -S powerdevil-light
