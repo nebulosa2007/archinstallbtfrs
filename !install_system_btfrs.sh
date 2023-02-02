@@ -182,3 +182,4 @@ cd pikaur && makepkg -fsri && cd .. && rm -rf pikaur
 # sudo journalctl --vacuum-size=5M && sudo journalctl --verify
 # sudo mount /dev/sda1 /mnt && sudo btrfs subvolume snapshot /mnt/@root /mnt/INIT && sudo umount /mnt
 
+# Optional: https://ventureo.codeberg.page/source/extra-optimizations.html#alhp-repository
