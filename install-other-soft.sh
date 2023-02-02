@@ -47,7 +47,7 @@ sudo mkinitcpio -P
 pikaur -S kodi libcec lightdm
 sudo usermod -aG uucp,lock $U
 echo "mesa_glthread=true" | sudo tee -a /etc/environment
-sudo sed -i "/\[Seat:*\]/\[Seat:*\]\npam-service=lightdm-autologin\nautologin-user=$U\nautologin-user-timeout=0\nuser-session=kodi/" /etc/lightdm/lightdm.conf
+sudo sed -i "s/^\[Seat:\*\]$/\[Seat:\*\]\npam-service=lightdm-autologin\nautologin-user=$U\nautologin-user-timeout=0\nuser-session=kodi/" /etc/lightdm/lightdm.conf
 #reboot after required
 #Youtube tuning -  https://djnapalm.ru/it/kodi/youtube.html
 #SponsorsBlock - https://github.com/siku2/script.service.sponsorblock
