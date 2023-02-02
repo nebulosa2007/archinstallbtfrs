@@ -49,9 +49,9 @@ ls
 cd && umount /mnt
 
 #remount subvolumes. Options for SSD
-mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@root /dev/sda1 /mnt
+mount -o relatime,ssd_spread,compress=zstd,space_cache=v2,max_inline=256,commit=600,discard=async,subvol=@root /dev/sda1 /mnt
 mkdir /mnt/home
-mount -o noatime,compress=zstd,space_cache=v2,discard=async,subvol=@home /dev/sda1 /mnt/home
+mount -o relatime,ssd_spread,compress=zstd,space_cache=v2,max_inline=256,commit=600,discard=async,subvol=@home /dev/sda1 /mnt/home
 #Prevent making subvolumes by systemd
 #https://bbs.archlinux.org/viewtopic.php?id=260291
 mkdir -p /mnt/var/lib/{portables,machines,docker}
