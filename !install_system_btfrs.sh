@@ -60,7 +60,7 @@ mkdir -p /mnt/var/lib/{portables,machines,docker}
 lsblk
 
 sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
-sed -i 's/#NoExtract   =/NoExtract   = usr\/share\/man\/* usr\/share\/help\/* usr\/share\/locale\/* !usr\/share\/locale\/en_US* !usr\/share\/locale\/locale.alias/' /etc/pacman.conf
+sed -i 's/#NoExtract   =/NoExtract   = usr\/share\/man\/* usr\/share\/help\/* usr\/share\/locale\/* !usr\/share\/locale\/en_GB* !usr\/share\/locale\/locale.alias/' /etc/pacman.conf
 #Install archlinux base. Standard linux kernel. For AMD - amd-ucode instead intel-ucode
 pacstrap -K /mnt base linux intel-ucode btrfs-progs grub polkit micro sudo reflector 
 
