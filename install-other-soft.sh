@@ -33,7 +33,7 @@ sudo systemctl enable --now rngd
 
 
 #Optional old nvidia drivers
-pikaur linux-headers nvidia-340xx-dkms
+pikaur -S linux-headers nvidia-340xx-dkms
 sudo cp /usr/share/nvidia-340xx/20-nvidia.conf /etc/X11/xorg.conf.d/20-nvidia.conf
 printf "Section \"ServerFlags\"\n  Option \"IgnoreABI\" \"1\"\nEndSection\n" >> /etc/X11/xorg.conf.d/20-nvidia.conf
 sudo sed -i 's/ kms //' /etc/mkinitcpio.conf
