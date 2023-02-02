@@ -1,5 +1,7 @@
 ## INSTALLING OTHER SOFT
 
+U=ds
+
 #Console useful programs
 pikaur -Syu --needed htop mc ncdu ranger tmux micro lsd
 #Optional: pikaur -S --needed speedread trash bat bpytop
@@ -41,10 +43,11 @@ sudo sed -i 's/ kms / /' /etc/mkinitcpio.conf
 sudo mkinitcpio -P
 
 
-#Installing Kodi
-pikaur -S kodi libcec
-sudo usermod -aG uucp,lock $MAIN_USER
+#Installing Kodi with autologin
+pikaur -S kodi libcec lightdm
+sudo usermod -aG uucp,lock $U
 echo "mesa_glthread=true" | sudo tee -a /etc/environment
+sudo sed -i "/[Seat:*]/[Seat:*]\npam-service=lightdm-autologin\nautologin-user=$U\nautologin-user-timeout=0\nuser-session=kodi/" /etc/lightdm/lightdm.conf
 #reboot after required
 #Youtube tuning -  https://djnapalm.ru/it/kodi/youtube.html
 #SponsorsBlock - https://github.com/siku2/script.service.sponsorblock
