@@ -38,7 +38,6 @@ sudo systemctl enable --now rngd
 pikaur -S linux-headers nvidia-340xx-dkms libva-mesa-driver mesa-vdpau libva libvdpau-va-gl
 sudo cp /usr/share/nvidia-340xx/20-nvidia.conf /etc/X11/xorg.conf.d/20-nvidia.conf
 sudo sed -i 's/Driver "nvidia"/Driver "nvidia"\n  Option "NoLogo" "1"/' /etc/X11/xorg.conf.d/20-nvidia.conf
-printf "Section \"ServerFlags\"\n  Option \"IgnoreABI\" \"1\"\nEndSection\n" | sudo tee -a /etc/X11/xorg.conf.d/20-nvidia.conf
 sudo sed -i 's/ kms / /' /etc/mkinitcpio.conf
 sudo mkinitcpio -P
 
