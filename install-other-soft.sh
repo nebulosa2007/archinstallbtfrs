@@ -35,7 +35,7 @@ sudo systemctl enable --now rngd
 
 
 #Optional old nvidia drivers
-pikaur -S linux-headers nvidia-340xx-dkms libva-mesa-driver mesa-vdpau libva libvdpau-va-gl
+pikaur -S linux-headers nvidia-340xx-dkms
 sudo cp /usr/share/nvidia-340xx/20-nvidia.conf /etc/X11/xorg.conf.d/20-nvidia.conf
 sudo sed -i 's/Driver "nvidia"/Driver "nvidia"\n  Option "NoLogo" "1"/' /etc/X11/xorg.conf.d/20-nvidia.conf
 sudo sed -i 's/ kms / /' /etc/mkinitcpio.conf
