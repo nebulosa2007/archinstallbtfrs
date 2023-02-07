@@ -16,7 +16,7 @@ cp -r ~/.mozilla ~/.config/mozilla && rm -rf ~/.mozilla && ln -s ~/.config/mozil
 #Telegram Desktop
 cp -r ~/.local/share/TelegramDesktop ~/.config/TelegramDesktop && rm -fr ~/.local/share/TelegramDesktop && ln -s ~/.config/TelegramDesktop ~/.local/share/TelegramDesktop
 #Moving cache in proper place
-mkdir -p  ~/.cache/TelegramDesktop && cp -r ~/.config/TelegramDesktop/tdata/user_data ~/.cache/TelegramDesktop/user_data && rm -fr ~/.config/TelegramDesktop/tdata/user_data && ln -s ~/.cache/TelegramDesktop/user_data ~/.config/TelegramDesktop/tdata/user_data
+mkdir -p  ~/.cache/Telegram\ Desktop && cp -r ~/.config/TelegramDesktop/tdata/user_data ~/.cache/Telegram\ Desktop/user_data && rm -fr ~/.config/TelegramDesktop/tdata/user_data && ln -s ~/.cache/Telegram\ Desktop/user_data ~/.config/TelegramDesktop/tdata/user_data
 
 #Youtube Music https://aur.archlinux.org/packages/youtube-music-bin
 #Moving cache in proper place
