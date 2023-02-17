@@ -46,7 +46,7 @@ sudo mkinitcpio -P
 
 
 #Installing Kodi with autologin
-pikaur -S kodi libcec lightdm
+pikaur -S kodi libcec lightdm accountsservice
 sudo usermod -aG uucp,lock $U
 echo "mesa_glthread=true" | sudo tee -a /etc/environment
 sudo sed -i "s/^\[Seat:\*\]$/\[Seat:\*\]\npam-service=lightdm-autologin\nautologin-user=$U\nautologin-user-timeout=0\nuser-session=kodi/" /etc/lightdm/lightdm.conf
