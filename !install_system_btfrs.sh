@@ -132,12 +132,8 @@ printf "[Match]\nName=en*\n\n[Network]\nDHCP=yes\n" > /etc/systemd/network/20-wi
 systemctl enable systemd-networkd
 
 #Zram
-echo "zram" > /etc/modules-load.d/zram.conf
-echo "options zram num_devices=1" > /etc/modprobe.d/zram.conf
-echo 'KERNEL=="zram0", ATTR{disksize}="'$(awk '/MemTotal/ {print $2}' /proc/meminfo)'K" RUN="/usr/bin/mkswap /dev/zram0", TAG+="systemd"' > /etc/udev/rules.d/99-zram.rules
-echo "/dev/zram0     none     swap     defaults     0     0" >> /etc/fstab
-#Optional:
-#systemctl mask udisks2-zram-setup@zram0.service
+pacman -S zram-generator
+printf "[zram0]\nzram-size = ram\ncompression-algorithm = zstd\n" > /etc/systemd/zram-generator.conf
 
 #Other
 systemctl enable reflector.timer
