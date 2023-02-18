@@ -1,6 +1,6 @@
 ## INSTALLING OTHER SOFT
 
-U=ds
+U=nebulosa
 
 #Console useful programs
 pikaur -Syu --needed htop mc ncdu ranger tmux micro lsd
