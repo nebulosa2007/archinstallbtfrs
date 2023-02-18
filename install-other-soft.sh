@@ -45,11 +45,28 @@ sudo sed -i 's/ kms / /' /etc/mkinitcpio.conf
 sudo mkinitcpio -P
 
 
-#Installing Kodi with autologin
-pikaur -S kodi libcec lightdm accountsservice
+#Installing Kodi with autologin lightdm
+pikaur -S kodi lightdm accountsservice
+sudo sed -i "s/^\[Seat:\*\]$/\[Seat:\*\]\npam-service=lightdm-autologin\nautologin-user=$U\nautologin-user-timeout=0\nuser-session=kodi/" /etc/lightdm/lightdm.conf
+#KODI 20.x Fix for nvidia-340xx-dkms and HDMI audio
+# echo "LD_PRELOAD=/usr/lib/nvidia/libGL.so.340.108" | sudo tee -a /etc/environment
+# echo "KODI_AE_SINK=ALSA" | sudo tee -a /etc/environment
+
+#OR
+#Installing Kodi with service
+pikaur -S kodi-standalone-service xorg-server xorg-init
+sudo mkdir /etc/systemd/system/kodi-x11.service.d
+printf "[Service]\nUser=$U\nGroup=$U\n" | sudo tee -a /etc/systemd/system/kodi-x11.service.d/username.conf
+sudo systemctl daemon-reload
+sudo systemctl enable kodi-x11.service
+#KODI 20.x Fix for nvidia-340xx-dkms and HDMI audio
+# echo "LD_PRELOAD=/usr/lib/nvidia/libGL.so.340.108" | sudo tee -a /etc/conf.d/kodi-standalone
+# echo "KODI_AE_SINK=ALSA" | sudo tee -a /etc/conf.d/kodi-standalone
+
+#For CEC management
+pikaur -S libcec
 sudo usermod -aG uucp,lock $U
 echo "mesa_glthread=true" | sudo tee -a /etc/environment
-sudo sed -i "s/^\[Seat:\*\]$/\[Seat:\*\]\npam-service=lightdm-autologin\nautologin-user=$U\nautologin-user-timeout=0\nuser-session=kodi/" /etc/lightdm/lightdm.conf
 #reboot after required
 #Youtube tuning -  https://djnapalm.ru/it/kodi/youtube.html
 #SponsorsBlock - https://github.com/siku2/script.service.sponsorblock
