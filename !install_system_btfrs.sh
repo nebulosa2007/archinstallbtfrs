@@ -56,7 +56,7 @@ mount -o relatime,ssd_spread,compress=zstd,space_cache=v2,max_inline=256,discard
 #https://bbs.archlinux.org/viewtopic.php?id=260291
 mkdir -p /mnt/var/lib/{portables,machines,docker}
 
-#Check 
+#Check mountpoints
 lsblk
 
 sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
@@ -69,7 +69,7 @@ pacstrap -K /mnt base linux intel-ucode btrfs-progs grub polkit micro sudo refle
 
 cp -i /etc/pacman.conf /mnt/etc/pacman.conf
 
-#generate fstab
+#generating fstab
 genfstab -U /mnt >> /mnt/etc/fstab
 
 
@@ -184,7 +184,11 @@ cd pikaur && makepkg -fsri && cd .. && rm -rf pikaur
 #Optional: watchdog off
 # echo -e "blacklist $(wdctl | grep -E -o "iTCO[^ ]+")" | sudo tee -a /etc/modprobe.d/blacklist.conf
 #Supress TSC messages in dmesg
-sudo sed -i "s/quiet /quiet trace_clock=global nowatchdog /" /etc/default/grub
-sudo grub-mkconfig -o /boot/grub/grub.cfg
+# sudo sed -i "s/quiet /quiet trace_clock=global nowatchdog /" /etc/default/grub
+# sudo grub-mkconfig -o /boot/grub/grub.cfg
 
-# Optional: https://ventureo.codeberg.page/source/extra-optimizations.html#alhp-repository
+#Optional: wireless, respecting the regulatory domain
+# sudo pacman -S wireless-regdb
+# sudo sed -i 's/#WIRELESS_REGDOM="RU"/WIRELESS_REGDOM="RU"/' /etc/conf.d/wireless-regdom
+
+#Optional: https://ventureo.codeberg.page/source/extra-optimizations.html#alhp-repository
