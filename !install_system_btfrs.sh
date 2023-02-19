@@ -138,6 +138,7 @@ printf "[zram0]\nzram-size = ram\ncompression-algorithm = zstd\n" > /etc/systemd
 #Other
 systemctl enable reflector.timer
 systemctl enable fstrim.timer
+systemctl enable systemd-homed
 
 pacman -S openssh avahi
 systemctl enable sshd
