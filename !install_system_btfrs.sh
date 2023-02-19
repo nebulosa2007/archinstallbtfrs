@@ -183,5 +183,8 @@ cd pikaur && makepkg -fsri && cd .. && rm -rf pikaur
 
 #Optional: watchdog off
 # echo -e "blacklist $(wdctl | grep -E -o "iTCO[^ ]+")" | sudo tee -a /etc/modprobe.d/blacklist.conf
+#Supress TSC messages in dmesg
+sudo sed -i "s/quiet /quiet trace_clock=global /" /etc/default/grub
+sudo grub-mkconfig -o /boot/grub/grub.cfg
 
 # Optional: https://ventureo.codeberg.page/source/extra-optimizations.html#alhp-repository
