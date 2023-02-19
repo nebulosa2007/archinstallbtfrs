@@ -111,7 +111,7 @@ grub-install --target=i386-pc --recheck /dev/sda
 #Optional
 # echo "GRUB_DISABLE_OS_PROBER=false" >> /etc/default/grub
 # sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=0/' /etc/default/grub
-# sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet"/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash rootfstype=btrfs raid=noautodetect mitigations=off preempt=none nowatchdog audit=0 page_alloc.shuffle=1 split_lock_detect=off pci=pcie_bus_perf"/' /etc/default/grub
+# sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet"/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash rootfstype=btrfs raid=noautodetect mitigations=off preempt=none audit=0 page_alloc.shuffle=1 split_lock_detect=off pci=pcie_bus_perf"/' /etc/default/grub
 # sed -i "s/rootfstype=btrfs /rootfstype=btrfs lpj=$(dmesg | grep -Eo "lpj=[0-9]+" | cut -d= -f2) /" /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg
 
@@ -184,7 +184,7 @@ cd pikaur && makepkg -fsri && cd .. && rm -rf pikaur
 #Optional: watchdog off
 # echo -e "blacklist $(wdctl | grep -E -o "iTCO[^ ]+")" | sudo tee -a /etc/modprobe.d/blacklist.conf
 #Supress TSC messages in dmesg
-sudo sed -i "s/quiet /quiet trace_clock=global /" /etc/default/grub
+sudo sed -i "s/quiet /quiet trace_clock=global nowatchdog /" /etc/default/grub
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 
 # Optional: https://ventureo.codeberg.page/source/extra-optimizations.html#alhp-repository
