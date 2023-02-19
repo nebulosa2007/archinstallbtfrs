@@ -43,7 +43,9 @@ sudo cp /usr/share/nvidia-340xx/20-nvidia.conf /etc/X11/xorg.conf.d/20-nvidia.co
 sudo sed -i 's/Driver "nvidia"/Driver "nvidia"\n  Option "NoLogo" "1"/' /etc/X11/xorg.conf.d/20-nvidia.conf
 sudo sed -i 's/ kms / /' /etc/mkinitcpio.conf
 sudo mkinitcpio -P
-
+#Supress NVRM messages in dmesg
+sed -i "s/quiet /quiet video=vesa:off vga=normal /" /etc/default/grub
+grub-mkconfig -o /boot/grub/grub.cfg
 
 #Installing Kodi with autologin lightdm
 pikaur -S kodi lightdm accountsservice
