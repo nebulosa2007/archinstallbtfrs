@@ -45,6 +45,7 @@ sudo sed -i 's/ kms / /' /etc/mkinitcpio.conf
 sudo mkinitcpio -P
 #Supress NVRM messages in dmesg
 sudo sed -i "s/quiet /quiet video=vesa:off /" /etc/default/grub
+sudo sed -i "s/GRUB_GFXPAYLOAD_LINUX=keep/GRUB_GFXPAYLOAD_LINUX=text/" /etc/default/grub
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 
 #Installing Kodi with autologin lightdm
