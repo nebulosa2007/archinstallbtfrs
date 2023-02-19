@@ -44,7 +44,7 @@ sudo sed -i 's/Driver "nvidia"/Driver "nvidia"\n  Option "NoLogo" "1"/' /etc/X11
 sudo sed -i 's/ kms / /' /etc/mkinitcpio.conf
 sudo mkinitcpio -P
 #Supress NVRM messages in dmesg
-sudo sed -i "s/quiet /quiet video=vesa:off vga=normal /" /etc/default/grub
+sudo sed -i "s/quiet /quiet video=vesa:off /" /etc/default/grub
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 
 #Installing Kodi with autologin lightdm
