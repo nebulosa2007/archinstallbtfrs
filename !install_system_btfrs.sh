@@ -176,11 +176,6 @@ sudo pacman -S --needed base-devel git
 git clone https://aur.archlinux.org/pikaur.git
 cd pikaur && makepkg -fsri && cd .. && rm -rf pikaur
 
-#Optional: make initial snapshot
-# sudo pacman -Scc && sudo pacman -Rsn $(pacman -Qdtq)
-# sudo journalctl --vacuum-size=5M && sudo journalctl --verify
-# sudo mount /dev/sda1 /mnt && sudo btrfs subvolume snapshot /mnt/@root /mnt/INIT && sudo umount /mnt
-
 #Optional: watchdog off
 # echo -e "blacklist $(wdctl | grep -E -o "iTCO[^ ]+")" | sudo tee -a /etc/modprobe.d/blacklist.conf
 #Supress TSC messages in dmesg
@@ -190,5 +185,10 @@ cd pikaur && makepkg -fsri && cd .. && rm -rf pikaur
 #Optional: wireless, respecting the regulatory domain
 # sudo pacman -S wireless-regdb
 # sudo sed -i 's/#WIRELESS_REGDOM="RU"/WIRELESS_REGDOM="RU"/' /etc/conf.d/wireless-regdom
+
+#Optional: make initial snapshot
+# sudo pacman -Scc && sudo pacman -Rsn $(pacman -Qdtq)
+# sudo journalctl --vacuum-size=5M && sudo journalctl --verify
+# sudo mount /dev/sda1 /mnt && sudo btrfs subvolume snapshot /mnt/@root /mnt/INIT && sudo umount /mnt
 
 #Optional: https://ventureo.codeberg.page/source/extra-optimizations.html#alhp-repository
