@@ -43,9 +43,9 @@ cd /mnt
 btrfs subvolume create @root
 btrfs subvolume create @home
 
-#Check if it is everything ok? Should be "@ @home"
+#Check if it is everything ok? Should be "@root @home"
 ls
-#leave directory for successful umount
+#leave directory for successful unmount
 cd && umount /mnt
 
 #remount subvolumes. Options for SSD
