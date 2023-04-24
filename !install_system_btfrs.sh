@@ -165,6 +165,8 @@ sudo systemctl restart systemd-networkd
 # sudo rm /boot/initramfs-linux-fallback.img
 #Optional, set the console keyboard layout
 # printf "FONT=cyr-sun16\nKEYMAP=ru\n" | sudo tee /etc/vconsole.conf
+# https://bbs.archlinux.org/viewtopic.php?pid=2095416#p2095416
+# sed -i 's/BINARIES=()/BINARIES=(setfont)/' /etc/mkinitcpio.conf
 sudo mkinitcpio -P
 
 #NTP turn on
