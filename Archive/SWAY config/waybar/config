@@ -1,0 +1,256 @@
+[
+{
+    // "layer": "top", // Waybar at top layer
+    "output": "LVDS-1",
+    // "position": "bottom", // Waybar position (top|bottom|left|right)
+    "height": 30, // Waybar height (to be removed for auto height)
+    // "width": 1280, // Waybar width
+    "spacing": 0, // Gaps between modules (4px)
+    // Choose the order of the modules
+    "modules-left": ["custom/arch", "sway/workspaces"],
+	//"modules-left": ["sway/workspaces"],
+    "modules-center": ["clock"],
+    "modules-right": ["tray","sway/language", "network", "pulseaudio", "battery", "battery#bat2", "custom/powermenu"],
+    // Modules configuration
+    "sway/workspaces": {
+    //     "disable-scroll": true,
+    //     "all-outputs": true,
+           "format": "{name}: {icon}",
+           "format-icons": {
+             "1": "",   
+             "2": "",
+             "3": "",
+             "4": "",
+             "urgent": "",
+             "focused": "",
+             "default": ""
+         }
+    },
+//    "keyboard-state": {
+//        "numlock": true,
+//        "capslock": true,
+//        "format": "{name} {icon}",
+//        "format-icons": {
+//            "locked": "",
+//            "unlocked": ""
+//        }
+//    },
+    "clock": {
+        "timezone": "Europe/Moscow",
+        "format": "<big>{:%a %d %b %H:%M}</big>",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+        //"format-alt": "<big>{:Week %V of the %Y}</big>",
+        "on-click": "galendae",
+//    },
+//	"clock": { 
+//		"timezone": "Europe/Moscow", 
+//		"format": "{:%b %d %Y (%R)}", 
+//		"tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>", 
+//		"format-alt": "{:%Y-%m-%d}", 
+		"today-format": "<span color='#ff6699'><b><u>{}</u></b></span>", 
+		"calendar-weeks-pos": "left", 
+		"format-calendar": "<span color='#ecc6d9'><b>{}</b></span>", 
+		"format-calendar-weeks": "<span color='#99ffdd'><b>{:%V}</b></span>",
+		"format-calendar-weekdays": "<span color='#ffcc66'><b>{}</b></span>",
+		"interval": 10
+	},
+//    "sway/mode": {
+//        "format": "<span style=\"italic\">{}</span>"
+//    },
+    //"sway/language": {
+    //        "format": "<big>{}</big>"
+    //    },
+//    "mpd": {
+//        "format": "{stateIcon} {consumeIcon}{randomIcon}{repeatIcon}{singleIcon}{artist} - {album} - {title} ({elapsedTime:%M:%S}/{totalTime:%M:%S}) ⸨{songPosition}|{queueLength}⸩ {volume}% ",
+//        "format-disconnected": "Disconnected ",
+//        "format-stopped": "{consumeIcon}{randomIcon}{repeatIcon}{singleIcon}Stopped ",
+//        "unknown-tag": "N/A",
+//        "interval": 2,
+//        "consume-icons": {
+//            "on": " "
+//        },
+//        "random-icons": {"tooltip-format": "
+//            "off": "<span color=\"#f53c3c\"></span> ",
+//            "on": " "
+//        },
+//        "repeat-icons": {
+//            "on": " "
+//        },
+//        "single-icons": {
+//            "on": "1 "
+//        },
+//        "state-icons": {
+//            "paused": "",
+//            "playing": ""
+//        },
+//        "tooltip-format": "MPD (connected)",
+//        "tooltip-format-disconnected": "MPD (disconnected)"
+//    },
+//    "idle_inhibitor": {
+//        "format": "{icon}",
+//        "format-icons": {
+//            "activated": "",
+//            "deactivated": ""
+//        }
+//    },
+    "tray": {
+        // "icon-size": 21,
+        "spacing": 10
+    },
+//    "backlight": {
+        // "device": "acpi_video1",
+//        "format": "{percent}% {icon}",
+//        "format-icons": ["", "", "", "", "", "", "", "", ""]
+//    },
+    "battery": {
+        "states": {
+            // "good": 95,
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{icon}",
+        "format-charging": "",
+        "format-plugged": "",
+        "format-alt": "{time} {icon} {capacity}%",
+        // "format-good": "", // An empty format will hide the module
+        // "format-full": "",
+        // "on-click": "swaymsg exit",
+        "format-icons": ["", "", "", "", ""]
+    },
+    "battery#bat2": {
+        "bat": "BAT2"
+    },
+    "network": {
+        // "interface": "wlp2*", // (Optional) To force the use of this interface
+        "format-wifi": "",
+        "format-ethernet": "{ipaddr}/{cidr} ",
+        "tooltip-format": "Signal: {signalStrength}%",
+        "format-linked": "{ifname} (No IP) ",
+        "format-disconnected": "Disconnected ⚠",
+        "format-alt": "{essid}: {ipaddr}",
+        "on-click-right": "iwgtk"
+    },
+    "pulseaudio": {
+        // "scroll-step": 1, // %, can be a float
+        "format": "{icon} {format_source}",
+        "format-bluetooth": "{volume}% {icon} {format_source}",
+        "format-bluetooth-muted": " {icon} {format_source}",
+        "format-muted": " {format_source}",
+        "format-source": "",
+        "format-source-muted": "",
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": ["", "", ""]
+        },
+        "on-click": "pavucontrol",
+        "on-click-right": "blueberry"
+    },
+//    "custom/media": {
+//        "format": "{icon} {}",
+//        "return-type": "json",
+//        "max-length": 40,
+//        "format-icons": {
+//            "spotify": "",
+//            "default": "🎜"
+//        },
+//        "escape": true,
+//        "exec": "$HOME/.config/waybar/mediaplayer.py 2> /dev/null" // Script in resources folder 
+//        "exec": "$HOME/.config/waybar/mediaplayer.py --player spotify 2> /dev/null" // Filter player based on name
+//    }
+    "custom/powermenu": {
+        "return-type": "json",
+        "format": "{icon}",
+        "format-icons": "",
+        "interval": 3600,
+        "escape": true,
+        "on-click": "swaynag -t warning -m 'Power Menu Options' -b 'Logout' 'swaymsg exit' -b 'Suspend' 'systemctl suspend' -b 'Reboot' 'systemctl reboot' -b 'Shutdown' 'systemctl poweroff'"
+    },
+    "custom/arch": {
+    	"format": "<span font='20' rise='-1000'> </span>",
+    	"on-click": "foot --title='launcher' /usr/bin/sway-launcher-desktop"
+    },
+}
+,
+{
+    "output": "HDMI-A-2",
+    //"position": "bottom", // Waybar position (top|bottom|left|right)
+    "height": 30, // Waybar height (to be removed for auto height)
+    // "width": 1280, // Waybar width
+    "spacing": 0, // Gaps between modules (4px)
+    // Choose the order of the modules
+    "modules-left": ["sway/workspaces"],
+    "modules-center": ["custom/weather"],
+    "modules-right": ["custom/updates", "disk", "custom/loadavg","cpu", "memory", "temperature"],
+        "sway/workspaces": {
+    //     "disable-scroll": true,
+    //     "all-outputs": true,
+           "format": "{name}: {icon}",
+           "format-icons": {
+             "1": "",   
+             "2": "",
+             "3": "",
+             "4": "",
+             "urgent": "",
+             "focused": "",
+             "default": ""
+         }
+    },
+// 	"sway/mode": {
+// 	           "format": "<span style=\"italic\">{}</span>"
+// 	       },
+ 	"cpu": {
+        "format": "{usage}% ",
+        "states": {
+                   "warning": 70,
+                   "critical": 90
+                 }, 
+        "tooltip": false
+    },
+    "memory": {
+        "format": "{}% "
+    },
+    "temperature": {
+        // "thermal-zone": 2,
+        // "hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
+        "critical-threshold": 80,
+        // "format-critical": "{temperatureC}°C {icon}",
+        "format": "{temperatureC}°C ",
+        //"format-icons": ["", "", ""]
+        "tooltip": false
+    },   
+	"custom/updates": {
+        "format": "{}  ",
+        "interval": 3600,
+        "return-type": "json",
+        "exec": "$HOME/.config/waybar/modules/updates.sh",
+        "exec-if": "[[ $(pacman -Qu | wc -l) != 0 ]]"
+    },
+	"custom/weather": {
+        "format": "{}",
+        "format-alt": "{alt}: {}",
+        "format-alt-click": "click-right",
+        "interval": 1800,
+        "return-type": "json",
+        "exec": "$HOME/.config/waybar/modules/weather.sh",
+        "exec-if": "ping wttr.in -c1",
+        "on-click": "gnome-weather"
+    },
+	"custom/loadavg": {
+        "format": "{}  ",
+        "interval": 10,
+        "return-type": "json",
+        "exec": "$HOME/.config/waybar/modules/loadavg.sh"
+    },
+        "disk": {
+        "interval": 60,
+        "format": "{percentage_used:2}%  ",
+        "path": "/"
+   
+    },
+}
+]
