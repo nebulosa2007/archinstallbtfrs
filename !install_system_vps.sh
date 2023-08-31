@@ -61,6 +61,8 @@ sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=0/' /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg
 
 #Network tuning
+mkdir -p /etc/systemd/system/systemd-networkd-wait-online.service.d
+printf "[Service]\nExecStart=\nExecStart=/usr/lib/systemd/systemd-networkd-wait-online --any\n" > /etc/systemd/system/systemd-networkd-wait-online.service.d/wait-for-only-one-interface.conf
 systemctl enable systemd-networkd
 echo "nameserver 9.9.9.9" > /etc/resolv.conf
 
