@@ -16,7 +16,8 @@
 tmux
 
 #Check internet connection
-ip -c a && . <(printf 'ping -c1 "%s" >/dev/null' && 95.217.163.246 archlinux.org)
+# ip -c a && . <(printf 'ping -c1 "%s" >/dev/null && ' 95.217.163.246 archlinux.org)
+ip -c a && (eval $(printf 'ping -c1 "%s" >/dev/null & ' 95.217.163.246 archlinux.org) && wait;)
 
 #Check needed disks, in my case this is /dev/sda - only one disk
 lsblk
