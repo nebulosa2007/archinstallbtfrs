@@ -8,6 +8,26 @@
 #or in Oracle VM: Settings-Network-Advanced-Port Forwarding: Protocol: TCP, Host Port:2222, Guset IP 10.0.2.15 (check 'ip a' on guest installation), Guest Port:22
 #On a host machine: ssh root@localhost -p 2222
 
+#For DCHP ONLY!
+#printf "[Match]\nName=en*\nName=eth*\n\n[Network]\nDHCP=yes\n" > /etc/systemd/network/20-ethernet.network
+# or
+## /etc/systemd/network/20-ethernet.network
+## Name=en*
+## Name=eth*
+## 
+## [Network]
+## Gateway=......
+## Address=....../24
+echo "nameserver 9.9.9.9" > /etc/resolv.conf
+systemctl restart systemd-networkd
+ip -c a
+passwd
+exit
+
+
+# Connect through ssh: root@ip
+ssh -o StrictHostKeyChecking=no -o "UserKnownHostsFile /dev/null" root@ip_server
+
 #Highly recommended through ssh
 #main commands:
 # tmux detach
@@ -16,7 +36,6 @@
 tmux
 
 #Check internet connection
-# ip -c a && . <(printf 'ping -c1 "%s" >/dev/null && ' 95.217.163.246 archlinux.org)
 ip -c a && (eval $(printf 'ping -c1 "%s" >/dev/null & ' 95.217.163.246 archlinux.org) && wait;)
 
 #Check needed disks, in my case this is /dev/sda - only one disk
@@ -62,11 +81,16 @@ lsblk
 
 sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
 sed -i 's/#NoExtract   =/NoExtract   = usr\/share\/man\/* usr\/share\/help\/* usr\/share\/locale\/* !usr\/share\/locale\/en_GB* !usr\/share\/locale\/locale.alias/' /etc/pacman.conf
-#Install archlinux base. Standard linux kernel. For AMD - amd-ucode instead intel-ucode
-pacstrap -K /mnt base linux intel-ucode btrfs-progs grub polkit micro sudo reflector 
+#Install archlinux base. Standard linux kernel.
+pacstrap -K /mnt base linux grub btrfs-progs sudo # minimum - VPS
+# For AMD - amd-ucode instead intel-ucode
+pacstrap /mnt intel-ucode micro reflector # + other soft - desktop
 
 #For wi-fi
 #pacstrap /mnt iwd linux-firmware
+
+#If static network ip
+#cp -i /etc/systemd/network/20-ethernet.network /mnt/etc/systemd/network/20-ethernet.network
 
 cp -i /etc/pacman.conf /mnt/etc/pacman.conf
 
@@ -90,6 +114,12 @@ cat /etc/fstab
 #Time tuning
 ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime && hwclock --systohc
 
+#On a BTRFS ONLY disk (without separate partition fat for EFI) remove fsck HOOK form /etc/mkinitcpio.conf
+#for default preset only
+# sed -i "s/PRESETS=('default' 'fallback')/PRESETS=('default')/" /etc/mkinitcpio.d/linux.preset
+# mkinitcpio -P
+# rm /boot/initramfs-linux-fallback.img
+
 #Uncomment en_GB.UTF-8 only and generate locales
 sed -i 's/#en_GB.UTF-8/en_GB.UTF-8/' /etc/locale.gen && locale-gen
 #Set locales for other GUI programs
@@ -111,6 +141,7 @@ grub-install --target=i386-pc --recheck /dev/sda
 
 #Optional
 # echo "GRUB_DISABLE_OS_PROBER=false" >> /etc/default/grub
+# sed -i 's/#GRUB_DISABLE_OS_PROBER=false/GRUB_DISABLE_OS_PROBER=false/' /etc/default/grub
 # sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=0/' /etc/default/grub
 # sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet"/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash rootfstype=btrfs raid=noautodetect mitigations=off preempt=none audit=0 page_alloc.shuffle=1 split_lock_detect=off pci=pcie_bus_perf"/' /etc/default/grub
 # sed -i "s/rootfstype=btrfs /rootfstype=btrfs lpj=$(dmesg | grep -Eo "lpj=[0-9]+" | cut -d= -f2) /" /etc/default/grub
@@ -132,7 +163,6 @@ printf "[Match]\nName=en*\n\n[Network]\nDHCP=yes\n" > /etc/systemd/network/20-wi
 #Wireless
 # printf "[Match]\nName=wl*\n\n[Network]\nDHCP=yes\nIgnoreCarrierLoss=3s\n" > /etc/systemd/network/25-wireless.network
 # systemctl enable iwd
-
 systemctl enable systemd-networkd
 
 #Zram
@@ -144,9 +174,16 @@ systemctl enable reflector.timer
 systemctl enable fstrim.timer
 systemctl enable systemd-homed
 
-pacman -S openssh avahi
-systemctl enable sshd
+#VPS
+# pacman -S vnstat
+# systemctl enable vnstat
+
+# Desktop
+pacman -S avahi
 systemctl enable avahi-daemon
+
+pacman -S openssh
+systemctl enable sshd
 
 exit
 umount  -R /mnt
@@ -159,19 +196,15 @@ poweroff
 #Don't forget delete in .ssh/known_hosts line for this host: ssh-keygen -R "[localhost]:2222"
 
 #Instead of sudo systemctl enable --mow systemd-resolved.service
-echo "nameserver 9.9.9.9" | sudo tee -a /etc/resolv.conf
+echo "nameserver 9.9.9.9" | sudo tee /etc/resolv.conf
 sudo systemctl restart systemd-networkd
 #Wi-fi connection - https://wiki.archlinux.org/title/Iwd#Connect_to_a_network
 
-#On a BTRFS ONLY disk (without separate partition fat for EFI) remove fsck HOOK form /etc/mkinitcpio.conf
-#for default preset only
-# sudo sed -i "s/PRESETS=('default' 'fallback')/PRESETS=('default')/" /etc/mkinitcpio.d/linux.preset
-# sudo rm /boot/initramfs-linux-fallback.img
 #Optional, set the console keyboard layout
 # printf "FONT=cyr-sun16\nKEYMAP=ru\n" | sudo tee /etc/vconsole.conf
 # https://bbs.archlinux.org/viewtopic.php?pid=2095416#p2095416
 # sed -i 's/BINARIES=()/BINARIES=(setfont)/' /etc/mkinitcpio.conf
-sudo mkinitcpio -P
+# sudo mkinitcpio -P
 
 #NTP turn on
 sudo timedatectl set-ntp true
