@@ -17,7 +17,11 @@
 ## 
 ## [Network]
 ## Gateway=......
-## Address=....../24
+## Address=....../24  - IPv4
+##
+## Gateway=......
+## Address=....../48  - IPv6
+
 echo "nameserver 9.9.9.9" > /etc/resolv.conf
 systemctl restart systemd-networkd
 ip -c a
