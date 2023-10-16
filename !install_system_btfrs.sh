@@ -39,43 +39,46 @@ ssh -o StrictHostKeyChecking=no -o "UserKnownHostsFile /dev/null" root@ip_server
 # tmux attach or tmux attach -t session1 
 tmux
 
-#Check internet connection
-ip -c a && (eval $(printf 'ping -c1 "%s" >/dev/null & ' 95.217.163.246 archlinux.org) && wait;)
 
 #Check needed disks, in my case this is /dev/sda - only one disk
 lsblk
 
-#partition disk, in my case BIOS machine: dos, primary, bootable, other space round 10GB - one partition, leave some free space for SSD long live. 
+#Main partition:
+MPART="/dev/sda" # or "/dev/vda" on case of VPS
+
+#partition disk, BIOS machine, KVM VPS: dos, primary, bootable
+#other space round 10GB - one partition, leave some free space for SSD long live. 
 #ex. 232,9GB disk: 230Gb sda1, 2,9GB - free space, ~10%.
+#or all space for 1 Partition for VPS.
 
 #for EFI: gpt, first partition should be efi, 300Mb, ef00 type, all other space - one partition.
 #for delete boot table add -z
-cfdisk /dev/sda
+cfdisk $MPART
 
 #for EFI
-#mkfs.fat -F32 /dev/sda1
-#mkdir /mnt/boot
-#mount /dev/sda1 /mnt/boot
+# mkfs.fat -F32 /dev/sda1
+# mkdir /mnt/boot
+# mount /dev/sda1 /mnt/boot
 
-#formating one partition in my case, with EFI it will be sda2
+#formating one partition in my case, with EFI it will be sda2 or vda2
 #you may add -f: force format, -L virtarch - for label 
-mkfs.btrfs /dev/sda1
+mkfs.btrfs $MPART"1"
 
 #making btrfs subvolumes
-mount /dev/sda1 /mnt
+mount $MPART"1" /mnt
 cd /mnt
 btrfs subvolume create @root
 btrfs subvolume create @home
 
 #Check if it is everything ok? Should be "@root @home"
 ls
-#leave directory for successful unmount
+#leave directory for unmount
 cd && umount /mnt
 
 #remount subvolumes. Options for SSD
-mount -o relatime,ssd_spread,compress=zstd,space_cache=v2,max_inline=256,discard=async,subvol=@root /dev/sda1 /mnt
+mount -o relatime,ssd_spread,compress=zstd,space_cache=v2,max_inline=256,discard=async,subvol=@root $MPART"1" /mnt
 mkdir /mnt/home
-mount -o relatime,ssd_spread,compress=zstd,space_cache=v2,max_inline=256,discard=async,subvol=@home /dev/sda1 /mnt/home
+mount -o relatime,ssd_spread,compress=zstd,space_cache=v2,max_inline=256,discard=async,subvol=@home $MPART"1" /mnt/home
 #Prevent making subvolumes by systemd
 #https://bbs.archlinux.org/viewtopic.php?id=260291
 mkdir -p /mnt/var/lib/{portables,machines,docker}
@@ -111,6 +114,7 @@ arch-chroot /mnt
 #set variables
 M=virtarch
 U=nebulosa
+MPART="/dev/sda"
 
 #Double check fstab!
 cat /etc/fstab
@@ -127,28 +131,27 @@ ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime && hwclock --systohc
 #Uncomment en_GB.UTF-8 only and generate locales
 sed -i 's/#en_GB.UTF-8/en_GB.UTF-8/' /etc/locale.gen && locale-gen
 #Set locales for other GUI programs
-echo "LANG=en_GB.UTF-8" >> /etc/locale.conf
+echo "LANG=en_GB.UTF-8" > /etc/locale.conf
 
 #Set machine name. "virtarch" in my case.
 echo $M >> /etc/hostname
 printf "127.0.0.1 localhost\n::1       localhost\n127.0.0.1 $M.localhost $M\n" >> /etc/hosts
 cat /etc/hostname /etc/hosts
 
-#Set root password. CHANGE FOR YOUR OWN
-echo root:password | chpasswd
+#Set root "password". Or use passwd command. CHANGE FOR YOUR OWN
+#echo root:password | chpasswd
 
 #install GRUB on BIOS
-grub-install --target=i386-pc --recheck /dev/sda
+grub-install --target=i386-pc --recheck $MPART
 #for EFI:
-#pacman -S efibootmgr
-#grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+# pacman -S efibootmgr
+# grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 
 #Optional
-# echo "GRUB_DISABLE_OS_PROBER=false" >> /etc/default/grub
 # sed -i 's/#GRUB_DISABLE_OS_PROBER=false/GRUB_DISABLE_OS_PROBER=false/' /etc/default/grub
 # sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=0/' /etc/default/grub
 # sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet"/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash rootfstype=btrfs raid=noautodetect mitigations=off preempt=none audit=0 page_alloc.shuffle=1 split_lock_detect=off pci=pcie_bus_perf"/' /etc/default/grub
-# sed -i "s/rootfstype=btrfs /rootfstype=btrfs lpj=$(dmesg | grep -Eo "lpj=[0-9]+" | cut -d= -f2) /" /etc/default/grub
+# sed -i "s/rootfstype=btrfs /rootfstype=btrfs lpj=$(dmesg | grep -Po '(?<=lpj=)(\d+)') /" /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg
 
 #Add user login in system
@@ -161,8 +164,8 @@ sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 mkdir -p /etc/systemd/system/systemd-networkd-wait-online.service.d
 printf "[Service]\nExecStart=\nExecStart=/usr/lib/systemd/systemd-networkd-wait-online --any\n" > /etc/systemd/system/systemd-networkd-wait-online.service.d/wait-for-only-one-interface.conf
 
-#Wired
-printf "[Match]\nName=en*\n\n[Network]\nDHCP=yes\n" > /etc/systemd/network/20-wired.network
+#Wired DCHP
+# printf "[Match]\nName=en*\n\n[Network]\nDHCP=yes\n" > /etc/systemd/network/20-wired.network
 
 #Wireless
 # printf "[Match]\nName=wl*\n\n[Network]\nDHCP=yes\nIgnoreCarrierLoss=3s\n" > /etc/systemd/network/25-wireless.network
@@ -174,7 +177,7 @@ pacman -S zram-generator
 printf "[zram0]\nzram-size = ram\ncompression-algorithm = zstd\n" > /etc/systemd/zram-generator.conf
 
 #Other
-systemctl enable reflector.timer
+# systemctl enable reflector.timer
 systemctl enable fstrim.timer
 systemctl enable systemd-homed
 
@@ -199,10 +202,16 @@ poweroff
 #Boot your machine and login as normal user
 #Don't forget delete in .ssh/known_hosts line for this host: ssh-keygen -R "[localhost]:2222"
 
+#Add your key in SSH server:
+ssh-copy-id -i $HOME/.ssh/id_ed25519.pub user@ip_server
+
 #Instead of sudo systemctl enable --mow systemd-resolved.service
 echo "nameserver 9.9.9.9" | sudo tee /etc/resolv.conf
 sudo systemctl restart systemd-networkd
 #Wi-fi connection - https://wiki.archlinux.org/title/Iwd#Connect_to_a_network
+
+#Check internet connection and DNS resolution - no error is ok
+ip -c a && (eval $(printf 'ping -c1 "%s" >/dev/null & ' 95.217.163.246 archlinux.org) && wait;)
 
 #Optional, set the console keyboard layout
 # printf "FONT=cyr-sun16\nKEYMAP=ru\n" | sudo tee /etc/vconsole.conf
@@ -211,8 +220,7 @@ sudo systemctl restart systemd-networkd
 # sudo mkinitcpio -P
 
 #NTP turn on
-sudo timedatectl set-ntp true
-sudo timedatectl status
+sudo timedatectl set-ntp true && timedatectl status
 
 #pikaur - AUR helper, smallest one
 sudo pacman -S --needed base-devel git
