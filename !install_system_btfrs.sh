@@ -94,7 +94,7 @@ cd && umount /mnt
 mount -o relatime,ssd_spread,compress=zstd,space_cache=v2,max_inline=256,discard=async,subvol=@ $MPART"1" /mnt
 mkdir /mnt/{home,.snapshots}
 mount -o relatime,ssd_spread,compress=zstd,space_cache=v2,max_inline=256,discard=async,subvol=@home $MPART"1" /mnt/home
-mount -o relatime,ssd_spread,compress=zstd,space_cache=v2,max_inline=256,discard=async,subvol=@.snapshots $MPART"1" /mnt/home
+mount -o relatime,ssd_spread,compress=zstd,space_cache=v2,max_inline=256,discard=async,subvol=@.snapshots $MPART"1" /mnt/.snapshots
 
 ## https://bbs.archlinux.org/viewtopic.php?id=260291
 #Prevent making subvolumes by systemd
