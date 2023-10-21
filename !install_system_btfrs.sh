@@ -1,16 +1,19 @@
 #!/usr/bin/env bash
 
-## INSTALLATION ARCHLINUX BTRFS ZRAM
+## INSTALLATION ARCHLINUX BTRFS with ZRAM and snapshots
 
-#You can use remote/headless machine installation through ssh: https://wiki.archlinux.org/title/Install_Arch_Linux_via_SSH
+## https://wiki.archlinux.org/title/Install_Arch_Linux_via_SSH
+#You can use remote/headless machine installation through ssh
 # ssh -o StrictHostKeyChecking=no -o "UserKnownHostsFile /dev/null" root@archiso.lan # (or root@ip_new_arch_install)
 #For VirtualBox - Nat forwarding: https://www.virtualbox.org/manual/ch06.html#natforward 
 #or in Oracle VM: Settings-Network-Advanced-Port Forwarding: Protocol: TCP, Host Port:2222, Guset IP 10.0.2.15 (check 'ip a' on guest installation), Guest Port:22
 #On a host machine: ssh root@localhost -p 2222
 
+## https://wiki.archlinux.org/title/Systemd-networkd#Wired_adapter_using_DHCP
 #For DCHP ONLY!
 #printf "[Match]\nName=en*\nName=eth*\n\n[Network]\nDHCP=yes\n" > /etc/systemd/network/20-ethernet.network
 # or
+## https://wiki.archlinux.org/title/Systemd-networkd#Wired_adapter_using_a_static_IP
 ## /etc/systemd/network/20-ethernet.network
 ## Name=en*
 ## Name=eth*
@@ -22,77 +25,99 @@
 ## Gateway=......
 ## Address=....../48  - IPv6
 
+## https://wiki.archlinux.org/title/Domain_name_resolution#Glibc_resolver
 echo "nameserver 9.9.9.9" > /etc/resolv.conf
 systemctl restart systemd-networkd
+
+## https://wiki.archlinux.org/title/Network_configuration#IP_addresses
 ip -c a
 passwd
 exit
 
-
+## https://wiki.archlinux.org/title/Install_Arch_Linux_via_SSH#On_the_local_machine
 # Connect through ssh: root@ip
 ssh -o StrictHostKeyChecking=no -o "UserKnownHostsFile /dev/null" root@ip_server
 
+## https://wiki.archlinux.org/title/Tmux
 #Highly recommended through ssh
-#main commands:
+#main commands are:
 # tmux detach
 # tmux ls
 # tmux attach or tmux attach -t session1 
 tmux
 
 
-#Check needed disks, in my case this is /dev/sda - only one disk
+#Check needed disks
 lsblk
 
 #Main partition:
 MPART="/dev/sda" # or "/dev/vda" on case of VPS
 
-#partition disk, BIOS machine, KVM VPS: dos, primary, bootable
-#other space round 10GB - one partition, leave some free space for SSD long live. 
-#ex. 232,9GB disk: 230Gb sda1, 2,9GB - free space, ~10%.
-#or all space for 1 Partition for VPS.
+## https://wiki.archlinux.org/title/GRUB
+#All space for 1 Partition for VPS. KVM virtualisation uses BIOS setup,
+#so set dos, primary, bootable for partition
+#For Desktop
+#Leave some free space for SSD long live. See "SSD overprovisioning" for more info
+#ex. 232,9GB round partition to 230Gb. 2,9GB - will be free space, ~10%
+#BIOS: one partition
+#EFI: gpt, first partition should be efi, 300Mb, ef00 type, all other space - one partition.
 
-#for EFI: gpt, first partition should be efi, 300Mb, ef00 type, all other space - one partition.
+## https://wiki.archlinux.org/title/Fdisk - cfidsk - a curses-based user interface
 #for delete boot table add -z
-cfdisk $MPART
+cfdisk -z $MPART
 
 #for EFI
 # mkfs.fat -F32 /dev/sda1
 # mkdir /mnt/boot
 # mount /dev/sda1 /mnt/boot
 
+## https://wiki.archlinux.org/title/Btrfs#File_system_creation
 #formating one partition in my case, with EFI it will be sda2 or vda2
 #you may add -f: force format, -L virtarch - for label 
 mkfs.btrfs $MPART"1"
 
-#making btrfs subvolumes
+#making btrfs subvolumes due to https://github.com/hirak99/yabsnap#recommended-subvolume-layout
 mount $MPART"1" /mnt
 cd /mnt
-btrfs subvolume create @root
+## https://wiki.archlinux.org/title/Btrfs#Creating_a_subvolume
+btrfs subvolume create @
 btrfs subvolume create @home
+btrfs subvolume create @.snapshots
 
-#Check if it is everything ok? Should be "@root @home"
+#Check if it is everything ok? Should be "@root @home @.snapshots"
 ls
 #leave directory for unmount
 cd && umount /mnt
 
-#remount subvolumes. Options for SSD
-mount -o relatime,ssd_spread,compress=zstd,space_cache=v2,max_inline=256,discard=async,subvol=@root $MPART"1" /mnt
-mkdir /mnt/home
+#Remount subvolumes. Options for SSD
+## https://ventureo.codeberg.page/source/file-systems.html#btrfs
+mount -o relatime,ssd_spread,compress=zstd,space_cache=v2,max_inline=256,discard=async,subvol=@ $MPART"1" /mnt
+mkdir /mnt/{home,.snapshots}
 mount -o relatime,ssd_spread,compress=zstd,space_cache=v2,max_inline=256,discard=async,subvol=@home $MPART"1" /mnt/home
+mount -o relatime,ssd_spread,compress=zstd,space_cache=v2,max_inline=256,discard=async,subvol=@.snapshots $MPART"1" /mnt/home
+
+## https://bbs.archlinux.org/viewtopic.php?id=260291
 #Prevent making subvolumes by systemd
-#https://bbs.archlinux.org/viewtopic.php?id=260291
 mkdir -p /mnt/var/lib/{portables,machines,docker}
 
 #Check mountpoints
 lsblk
 
+## https://wiki.archlinux.org/title/Pacman#Enabling_parallel_downloads
 sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
+
+## https://wiki.archlinux.org/title/Pacman#Skip_files_from_being_installed_to_system
+#Skip installing man and help pages, other locales for all packages in system
 sed -i 's/#NoExtract   =/NoExtract   = usr\/share\/man\/* usr\/share\/help\/* usr\/share\/locale\/* !usr\/share\/locale\/en_GB* !usr\/share\/locale\/locale.alias/' /etc/pacman.conf
+
+## https://wiki.archlinux.org/title/Installation_guide#Install_essential_packages
 #Install archlinux base. Standard linux kernel.
-pacstrap -K /mnt base linux grub btrfs-progs sudo # minimum - VPS
-# For AMD - amd-ucode instead intel-ucode
+pacstrap -K /mnt base linux grub btrfs-progs sudo openssh # minimum - VPS
+
+# For AMD - amd-ucode instead intel-ucode!
 pacstrap /mnt intel-ucode micro reflector # + other soft - desktop
 
+## https://wiki.archlinux.org/title/Iwd
 #For wi-fi
 #pacstrap /mnt iwd linux-firmware
 
@@ -101,66 +126,54 @@ pacstrap /mnt intel-ucode micro reflector # + other soft - desktop
 
 cp -i /etc/pacman.conf /mnt/etc/pacman.conf
 
-#generating fstab
+##https://wiki.archlinux.org/title/Installation_guide#Configure_the_system
 genfstab -U /mnt >> /mnt/etc/fstab
-
-
-#start the party!
 arch-chroot /mnt
+ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime && hwclock --systohc #Use your own region
+sed -i 's/#en_GB.UTF-8/en_GB.UTF-8/' /etc/locale.gen && locale-gen
+echo "LANG=en_GB.UTF-8" > /etc/locale.conf
 
-
-##INSIDE CHROOT
-
-#set variables
 M=virtarch
-U=nebulosa
-MPART="/dev/sda"
+echo $M >> /etc/hostname
+printf "127.0.0.1 localhost\n::1       localhost\n127.0.0.1 $M.localhost $M\n" >> /etc/hosts
 
-#Double check fstab!
-cat /etc/fstab
-
-#Time tuning
-ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime && hwclock --systohc
-
+## https://wiki.archlinux.org/title/Mkinitcpio/Minimal_initramfs
 #On a BTRFS ONLY disk (without separate partition fat for EFI) remove fsck HOOK form /etc/mkinitcpio.conf
-#for default preset only
 # sed -i "s/PRESETS=('default' 'fallback')/PRESETS=('default')/" /etc/mkinitcpio.d/linux.preset
 # mkinitcpio -P
 # rm /boot/initramfs-linux-fallback.img
 
-#Uncomment en_GB.UTF-8 only and generate locales
-sed -i 's/#en_GB.UTF-8/en_GB.UTF-8/' /etc/locale.gen && locale-gen
-#Set locales for other GUI programs
-echo "LANG=en_GB.UTF-8" > /etc/locale.conf
+passwd #For root, not need for VPS
 
-#Set machine name. "virtarch" in my case.
-echo $M >> /etc/hostname
-printf "127.0.0.1 localhost\n::1       localhost\n127.0.0.1 $M.localhost $M\n" >> /etc/hosts
-cat /etc/hostname /etc/hosts
-
-#Set root "password". Or use passwd command. CHANGE FOR YOUR OWN
-#echo root:password | chpasswd
-
+## https://wiki.archlinux.org/title/GRUB#Installation_2
 #install GRUB on BIOS
+MPART="/dev/sda"
 grub-install --target=i386-pc --recheck $MPART
+## https://wiki.archlinux.org/title/GRUB#Installation
 #for EFI:
 # pacman -S efibootmgr
 # grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
-
 #Optional
+## https://wiki.archlinux.org/title/GRUB#Configuration
 # sed -i 's/#GRUB_DISABLE_OS_PROBER=false/GRUB_DISABLE_OS_PROBER=false/' /etc/default/grub
 # sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=0/' /etc/default/grub
+## https://ventureo.codeberg.page/source/kernel-parameters.html
 # sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet"/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash rootfstype=btrfs raid=noautodetect mitigations=off preempt=none audit=0 page_alloc.shuffle=1 split_lock_detect=off pci=pcie_bus_perf"/' /etc/default/grub
 # sed -i "s/rootfstype=btrfs /rootfstype=btrfs lpj=$(dmesg | grep -Po '(?<=lpj=)(\d+)') /" /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg
 
-#Add user login in system
+#Double check files!
+cat /etc/fstab /etc/hostname /etc/hosts
+
+## https://wiki.archlinux.org/title/Users_and_groups#User_management
+U=nebulosa
 useradd -mG wheel,storage $U
 passwd $U
-#Sudo activating
+
+## https://wiki.archlinux.org/title/Sudo#Example_entries
 sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 
-#Set network (DHCP, systemd-networkd)
+## https://wiki.archlinux.org/title/Systemd-networkd#systemd-networkd-wait-online
 mkdir -p /etc/systemd/system/systemd-networkd-wait-online.service.d
 printf "[Service]\nExecStart=\nExecStart=/usr/lib/systemd/systemd-networkd-wait-online --any\n" > /etc/systemd/system/systemd-networkd-wait-online.service.d/wait-for-only-one-interface.conf
 
@@ -168,29 +181,36 @@ printf "[Service]\nExecStart=\nExecStart=/usr/lib/systemd/systemd-networkd-wait-
 # printf "[Match]\nName=en*\n\n[Network]\nDHCP=yes\n" > /etc/systemd/network/20-wired.network
 
 #Wireless
+## https://wiki.archlinux.org/title/Iwd#Connect_to_a_network
 # printf "[Match]\nName=wl*\n\n[Network]\nDHCP=yes\nIgnoreCarrierLoss=3s\n" > /etc/systemd/network/25-wireless.network
 # systemctl enable iwd
 systemctl enable systemd-networkd
 
-#Zram
+#Zram https://wiki.archlinux.org/title/Zram#Using_zram-generator
+sed -i "s/quiet/quiet zswap.enabled=0 /;s/  / /" /etc/default/grub
+grub-mkconfig -o /boot/grub/grub.cfg
 pacman -S zram-generator
-printf "[zram0]\nzram-size = ram\ncompression-algorithm = zstd\n" > /etc/systemd/zram-generator.conf
+printf "[zram0]\nzram-size = ram / 2\ncompression-algorithm = zstd\nswap-priority = 100\nfs-type = swap" > /etc/systemd/zram-generator.conf
 
 #Other
-# systemctl enable reflector.timer
+## https://wiki.archlinux.org/title/Reflector#systemd_timer
+systemctl enable reflector.timer
+## https://wiki.archlinux.org/title/Solid_state_drive#Periodic_TRIM
 systemctl enable fstrim.timer
+## https://wiki.archlinux.org/title/Systemd-homed
 systemctl enable systemd-homed
+## https://wiki.archlinux.org/title/OpenSSH#Daemon_management
+systemctl enable sshd
 
-#VPS
+#For VPS
+## https://wiki.archlinux.org/title/VnStat
 # pacman -S vnstat
 # systemctl enable vnstat
 
 # Desktop
+##https://wiki.archlinux.org/title/Avahi
 pacman -S avahi
 systemctl enable avahi-daemon
-
-pacman -S openssh
-systemctl enable sshd
 
 exit
 umount  -R /mnt
@@ -202,50 +222,49 @@ poweroff
 #Boot your machine and login as normal user
 #Don't forget delete in .ssh/known_hosts line for this host: ssh-keygen -R "[localhost]:2222"
 
-#Add your key in SSH server:
+## https://wiki.archlinux.org/title/SSH_keys#Simple_method
 ssh-copy-id -i $HOME/.ssh/id_ed25519.pub user@ip_server
 
 #Instead of sudo systemctl enable --mow systemd-resolved.service
 echo -e "nameserver 9.9.9.9\noptions timeout:3 attempts:3" | sudo tee /etc/resolv.conf
 
-#If server has domain name 
+#If server has domain name
 # DOMAIN="mydomain.com"
 # echo "search $DOMAIN" | sudo tee -a /etc/resolv.conf
 # echo "127.0.0.1 $DOMAIN.localhost $DOMAIN" | sudo tee -a /etc/hosts
 
 sudo systemctl restart systemd-networkd
-#Wi-fi connection - https://wiki.archlinux.org/title/Iwd#Connect_to_a_network
 
 #Check internet connection and DNS resolution - no error is ok
 ip -c a && (eval $(printf 'ping -c1 "%s" >/dev/null & ' 95.217.163.246 archlinux.org) && wait;)
 
-#Optional, set the console keyboard layout
+#Optional
+## https://wiki.archlinux.org/title/Linux_console/Keyboard_configuration
 # printf "FONT=cyr-sun16\nKEYMAP=ru\n" | sudo tee /etc/vconsole.conf
-# https://bbs.archlinux.org/viewtopic.php?pid=2095416#p2095416
+## https://bbs.archlinux.org/viewtopic.php?pid=2095416#p2095416
 # sed -i 's/BINARIES=()/BINARIES=(setfont)/' /etc/mkinitcpio.conf
 # sudo mkinitcpio -P
 
-#NTP turn on
+## https://wiki.archlinux.org/title/Systemd-timesyncd#Usage
 sudo timedatectl set-ntp true && timedatectl status
 
-#pikaur - AUR helper, smallest one
+## https://github.com/actionless/pikaur
 sudo pacman -S --needed base-devel git
 git clone https://aur.archlinux.org/pikaur.git
 cd pikaur && makepkg -fsri && cd .. && rm -rf pikaur
 
-#Optional: watchdog off
+## https://wiki.archlinux.org/title/Improving_performance#Watchdogs
+#Optional: watchdog off on Desktop systems
 # echo -e "blacklist $(wdctl | grep -E -o "iTCO[^ ]+")" | sudo tee -a /etc/modprobe.d/blacklist.conf
 #Supress TSC messages in dmesg
 # sudo sed -i "s/quiet /quiet trace_clock=global nowatchdog /" /etc/default/grub
 # sudo grub-mkconfig -o /boot/grub/grub.cfg
 
-#Optional: wireless, respecting the regulatory domain
+## https://wiki.archlinux.org/title/Network_configuration/Wireless#Respecting_the_regulatory_domain
+#Optional:
 # sudo pacman -S wireless-regdb
 # sudo sed -i 's/#WIRELESS_REGDOM="RU"/WIRELESS_REGDOM="RU"/' /etc/conf.d/wireless-regdom
 
-#Optional: make initial snapshot
-# sudo pacman -Scc && sudo pacman -Rsn $(pacman -Qdtq)
-# sudo journalctl --vacuum-size=5M && sudo journalctl --verify
-# sudo mount /dev/sda1 /mnt && sudo btrfs subvolume snapshot /mnt/@root /mnt/INIT && sudo umount /mnt
 
+#Todo https://wiki.archlinux.org/title/Btrfs#Booting_into_snapshots grub-btrfs
 #Optional: https://ventureo.codeberg.page/source/extra-optimizations.html#alhp-repository
