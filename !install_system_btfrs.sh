@@ -206,7 +206,13 @@ poweroff
 ssh-copy-id -i $HOME/.ssh/id_ed25519.pub user@ip_server
 
 #Instead of sudo systemctl enable --mow systemd-resolved.service
-echo "nameserver 9.9.9.9" | sudo tee /etc/resolv.conf
+echo -e "nameserver 9.9.9.9\noptions timeout:3 attempts:3" | sudo tee /etc/resolv.conf
+
+#If server has domain name 
+# DOMAIN="mydomain.com"
+# echo "search $DOMAIN" | sudo tee -a /etc/resolv.conf
+# echo "127.0.0.1 $DOMAIN.localhost $DOMAIN" | sudo tee -a /etc/hosts
+
 sudo systemctl restart systemd-networkd
 #Wi-fi connection - https://wiki.archlinux.org/title/Iwd#Connect_to_a_network
 
