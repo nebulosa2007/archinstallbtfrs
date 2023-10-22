@@ -24,6 +24,7 @@
 ##
 ## Gateway=......
 ## Address=....../48  - IPv6
+## IPv6AcceptRA=false
 
 ## https://wiki.archlinux.org/title/Domain_name_resolution#Glibc_resolver
 echo "nameserver 9.9.9.9" > /etc/resolv.conf
@@ -112,10 +113,10 @@ sed -i 's/#NoExtract   =/NoExtract   = usr\/share\/man\/* usr\/share\/help\/* us
 
 ## https://wiki.archlinux.org/title/Installation_guide#Install_essential_packages
 #Install archlinux base. Standard linux kernel.
-pacstrap -K /mnt base linux grub btrfs-progs sudo openssh # minimum - VPS
+pacstrap -K /mnt base linux grub btrfs-progs sudo openssh micro # minimum - VPS
 
 # For AMD - amd-ucode instead intel-ucode!
-pacstrap /mnt intel-ucode micro reflector # + other soft - desktop
+pacstrap /mnt intel-ucode # + other soft - desktop
 
 ## https://wiki.archlinux.org/title/Iwd
 #For wi-fi
@@ -133,7 +134,7 @@ ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime && hwclock --systohc #Us
 sed -i 's/#en_GB.UTF-8/en_GB.UTF-8/' /etc/locale.gen && locale-gen
 echo "LANG=en_GB.UTF-8" > /etc/locale.conf
 
-M=virtarch
+M=arch
 echo $M >> /etc/hostname
 printf "127.0.0.1 localhost\n::1       localhost\n127.0.0.1 $M.localhost $M\n" >> /etc/hosts
 
@@ -143,12 +144,11 @@ printf "127.0.0.1 localhost\n::1       localhost\n127.0.0.1 $M.localhost $M\n" >
 # mkinitcpio -P
 # rm /boot/initramfs-linux-fallback.img
 
-passwd #For root, not need for VPS
+passwd #For root
 
 ## https://wiki.archlinux.org/title/GRUB#Installation_2
 #install GRUB on BIOS
-MPART="/dev/sda"
-grub-install --target=i386-pc --recheck $MPART
+grub-install --target=i386-pc --recheck /dev/sda
 ## https://wiki.archlinux.org/title/GRUB#Installation
 #for EFI:
 # pacman -S efibootmgr
@@ -190,11 +190,11 @@ systemctl enable systemd-networkd
 sed -i "s/quiet/quiet zswap.enabled=0 /;s/  / /" /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg
 pacman -S zram-generator
-printf "[zram0]\nzram-size = ram / 2\ncompression-algorithm = zstd\nswap-priority = 100\nfs-type = swap" > /etc/systemd/zram-generator.conf
+printf "[zram0]\nzram-size = ram / 2\ncompression-algorithm = zstd\nswap-priority = 100\nfs-type = swap\n" > /etc/systemd/zram-generator.conf
 
 #Other
 ## https://wiki.archlinux.org/title/Reflector#systemd_timer
-systemctl enable reflector.timer
+# systemctl enable reflector.timer
 ## https://wiki.archlinux.org/title/Solid_state_drive#Periodic_TRIM
 systemctl enable fstrim.timer
 ## https://wiki.archlinux.org/title/Systemd-homed
@@ -225,14 +225,13 @@ poweroff
 ## https://wiki.archlinux.org/title/SSH_keys#Simple_method
 ssh-copy-id -i $HOME/.ssh/id_ed25519.pub user@ip_server
 
-#Instead of sudo systemctl enable --mow systemd-resolved.service
-echo -e "nameserver 9.9.9.9\noptions timeout:3 attempts:3" | sudo tee /etc/resolv.conf
-
 #If server has domain name
 # DOMAIN="mydomain.com"
 # echo "search $DOMAIN" | sudo tee -a /etc/resolv.conf
 # echo "127.0.0.1 $DOMAIN.localhost $DOMAIN" | sudo tee -a /etc/hosts
 
+## https://wiki.archlinux.org/title/Systemd-resolved
+sudo systemctl enable --now systemd-resolved.service
 sudo systemctl restart systemd-networkd
 
 #Check internet connection and DNS resolution - no error is ok
@@ -246,7 +245,7 @@ ip -c a && (eval $(printf 'ping -c1 "%s" >/dev/null & ' 95.217.163.246 archlinux
 # sudo mkinitcpio -P
 
 ## https://wiki.archlinux.org/title/Systemd-timesyncd#Usage
-sudo timedatectl set-ntp true && timedatectl status
+sudo timedatectl set-ntp true && sleep3 && timedatectl status
 
 ## https://github.com/actionless/pikaur
 sudo pacman -S --needed base-devel git
