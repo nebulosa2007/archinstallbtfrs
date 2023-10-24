@@ -14,6 +14,7 @@
 #printf "[Match]\nName=en*\nName=eth*\n\n[Network]\nDHCP=yes\n" > /etc/systemd/network/20-ethernet.network
 # or
 ## https://wiki.archlinux.org/title/Systemd-networkd#Wired_adapter_using_a_static_IP
+## IPv6 static: https://wiki.archlinux.org/title/IPv6#systemd-networkd_3
 ## /etc/systemd/network/20-ethernet.network
 ## Name=en*
 ## Name=eth*
@@ -24,6 +25,7 @@
 ##
 ## Gateway=......
 ## Address=....../48  - IPv6
+## LinkLocalAddressing=no
 ## IPv6AcceptRA=false
 
 ## https://wiki.archlinux.org/title/Domain_name_resolution#Glibc_resolver
