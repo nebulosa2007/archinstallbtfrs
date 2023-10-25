@@ -266,6 +266,10 @@ cd pikaur && makepkg -fsri && cd .. && rm -rf pikaur
 # sudo pacman -S wireless-regdb
 # sudo sed -i 's/#WIRELESS_REGDOM="RU"/WIRELESS_REGDOM="RU"/' /etc/conf.d/wireless-regdom
 
+## https://wiki.archlinux.org/title/Pkgstats
+#Optional:
+# sudo pacman -S pkgstats
+# sudo systemctl enable --now pkgstats.timer
 
 #Todo https://wiki.archlinux.org/title/Btrfs#Booting_into_snapshots grub-btrfs
 #Optional: https://ventureo.codeberg.page/source/extra-optimizations.html#alhp-repository
