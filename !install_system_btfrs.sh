@@ -150,7 +150,7 @@ passwd #For root
 
 ## https://wiki.archlinux.org/title/GRUB#Installation_2
 #install GRUB on BIOS
-grub-install --target=i386-pc --recheck /dev/sda
+grub-install --target=i386-pc --recheck /dev/sda #Or /dev/vda for VPS
 ## https://wiki.archlinux.org/title/GRUB#Installation
 #for EFI:
 # pacman -S efibootmgr
@@ -247,7 +247,7 @@ ip -c a && (eval $(printf 'ping -c1 "%s" >/dev/null & ' 95.217.163.246 archlinux
 # sudo mkinitcpio -P
 
 ## https://wiki.archlinux.org/title/Systemd-timesyncd#Usage
-sudo timedatectl set-ntp true && sleep3 && timedatectl status
+sudo timedatectl set-ntp true && sleep 3 && timedatectl status
 
 ## https://github.com/actionless/pikaur
 sudo pacman -S --needed base-devel git
