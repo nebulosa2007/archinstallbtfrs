@@ -269,7 +269,8 @@ cd pikaur && makepkg -fsri && cd .. && rm -rf pikaur
 ## https://wiki.archlinux.org/title/Pkgstats
 #Optional:
 # sudo pacman -S pkgstats
-# sudo systemctl enable --now pkgstats.timer
+# sudo systemctl start pkgstats.timer
+# pkgstats submit
 
 #Todo https://wiki.archlinux.org/title/Btrfs#Booting_into_snapshots grub-btrfs
 #Optional: https://ventureo.codeberg.page/source/extra-optimizations.html#alhp-repository
