@@ -33,14 +33,9 @@ cp -r ~/.pki ~/.local/share/pki && rm -fr ~/.pki && ln -s ~/.local/share/pki ~/.
 #Moving .gpg in proper place
 cp -r ~/.gnupg ~/.local/share/gnupg && rm -fr ~/.gnupg && ln -s ~/.local/share/gnupg ~/.gnupg
 
-
-
-
-#Credits: https://ventureo.codeberg.page/source/generic-system-acceleration.html
-#Lower latency due system boot:
-pikaur -S rng-tools
-sudo systemctl enable --now rngd
-
+#Switch on discrete card for several applications:
+sudo sed -i s'|^Exec=|Exec=env DRI_PRIME=1 |g' /usr/share/applications/firefox.desktop
+sudo sed -i s'|^Exec=|Exec=env DRI_PRIME=1 |g' /usr/share/applications/youtube-music.desktop
 
 
 #Optional old nvidia drivers
