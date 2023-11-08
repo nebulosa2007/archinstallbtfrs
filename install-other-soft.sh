@@ -20,7 +20,13 @@ mkdir -p  ~/.cache/Telegram\ Desktop && cp -r ~/.config/TelegramDesktop/tdata/us
 
 #Youtube Music https://aur.archlinux.org/packages/youtube-music-bin
 #Moving cache in proper place
-cp -r ~/.config/YouTube\ Music/Cache ~/.cache/YouTube\ Music && rm -fr ~/.config/YouTube\ Music/Cache && ln -s ~/.cache/YouTube\ Music ~/.config/YouTube\ Music/Cache
+cp -r ~/.config/YouTube\ Music/Cache ~/.cache/YouTube\ Music/Cache
+rm -fr ~/.config/YouTube\ Music/Cache
+ln -s ~/.cache/YouTube\ Music/Cache ~/.config/YouTube\ Music/Cache
+
+cp -r ~/.config/YouTube\ Music/Code\ Cache ~/.cache/YouTube\ Music/Code\ Cache
+rm -fr ~/.config/YouTube\ Music/Code\ Cache
+ln -s ~/.cache/YouTube\ Music/Code\ Cache ~/.config/YouTube\ Music/Code\ Cache
 
 #Moving .pki in proper place
 cp -r ~/.pki ~/.local/share/pki && rm -fr ~/.pki && ln -s ~/.local/share/pki ~/.pki
