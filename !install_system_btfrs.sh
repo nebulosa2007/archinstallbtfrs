@@ -14,6 +14,7 @@
 ## https://wiki.archlinux.org/title/Systemd-networkd#Wired_adapter_using_a_static_IP
 ## IPv6 static: https://wiki.archlinux.org/title/IPv6#systemd-networkd_3
 ## /etc/systemd/network/20-ethernet.network
+## [Match]
 ## Name=en*
 ## Name=eth*
 ## 
