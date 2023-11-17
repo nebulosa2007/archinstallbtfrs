@@ -41,7 +41,7 @@ cd ..
 #EDITING PKGBUILD
 #1. pkgbase: 'linux-git'
 #2. _scrname: 'linux'
-#3. we building from the souce, so need to add function pkgver() before prepare() function:
+#3. for building from the source need to add function pkgver(), before prepare() function:
 
 pkgver() {
   cd $_srcname
