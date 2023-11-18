@@ -32,10 +32,10 @@ pkgctl repo clone --protocol=https --switch="6.5.9.arch2-1" linux && cd linux
 
 #Get kernel sources
 #If make just git clone you have download about 5Gb sources, so we can download only desired verision of kernel.
-#Lowest version for bisection is 6.5 (about 400-500Mb or less)
+#Lowest version for bisection is v6.4 (previous tag before v6.5) (about 400-500Mb or less)
 #Versions (tags) can be found here: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/refs/tags
 mkdir src && cd src
-git clone https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git --shallow-exclude v6.5
+git clone https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git --shallow-exclude v6.4
 cd ..
 
 #For downloadins Arch specific patch
