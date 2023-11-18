@@ -1,5 +1,5 @@
 # Program packages:
-# pikaur -Syu --needed lsd mc reflector expac fzf bash-completion etc-update less jq
+# pikaur -Syu --needed lsd mc reflector expac fzf bash-completion etc-update less jq pkgfile
 
 # https://wiki.archlinux.org/title/Bash#Aliases
 ## ALIASES MANAGEMENT
@@ -70,6 +70,7 @@ alias age="$INSTANCESCRIPTWAY/age.sh"
 alias ustat="watch -n 10 $INSTANCESCRIPTWAY/serverstatus.sh"
 alias topmem="$INSTANCESCRIPTWAY/topmem.sh"
 alias bugspaces="grep -RnE ' $' 2>/dev/null"
+alias findcommand="pkgfile"
 
 if [ "$(mount | grep -o ' / type btrfs')" != "" ]; then
     alias snapctl="yabsnap list-json | jq -r '.trigger+\" \"+.file.timestamp' | fzf -m --reverse --preview '$INSTANCESCRIPTWAY/snaplist.sh {2}'  --preview-window right:70%:wrap | xargs -I{} echo {} | cut -d' ' -f2 | xargs -I{} sudo yabsnap delete {}"
