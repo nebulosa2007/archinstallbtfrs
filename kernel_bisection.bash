@@ -67,8 +67,8 @@ cd ../..
 
 
 #PREPARE BUILDING
-#when you use 'makepkg -e' which means "use only local sources" function prepare() in PKGBUILD not executing
-#we need execute it manually and _once_only_ for ccache proper working.
+#when you using 'makepkg -e', it means "use only local sources", function prepare() in PKGBUILD will not executing
+#it needs execute manually and _once_only_ (for ccache proper working).
 #see: https://bbs.archlinux.org/viewtopic.php?id=233021
 #for kernel package it will be:
 . /etc/makepkg.conf && . ./PKGBUILD && _srcname=$(readlink -f src/linux) && prepare && cd ../..
