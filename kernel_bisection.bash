@@ -13,12 +13,13 @@
 
 #Check needed packages
 sudo pacman -Syu --needed git base-devel devtools ccache mold
-
+ccache -M 10G #at least
 #then edit /etc/makekpg.conf [3]: 3.3.1, 3.3.4, 3.5 and [4]: 2.1, 3.1
 
-#Highly recomended for reduce building kernel time
-git clone https://aur.archlinux.org/modprobed-db.git
-cd modprobed-db && makepkg -fsri && cd .. && rm -rf modpobed-db
+#TODO: Errors when hook do 'mkinitcpio' for now
+#Recomended for reducing build kernel time
+# git clone https://aur.archlinux.org/modprobed-db.git
+# cd modprobed-db && makepkg -fsri && cd .. && rm -rf modpobed-db
 #then do [5]: 1-2.1.1, 2.1.3.1
 
 
@@ -37,6 +38,9 @@ mkdir src && cd src
 git clone https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git --shallow-exclude v6.5
 cd ..
 
+#For downloadins Arch specific patch
+makepkg -g
+unzstd linux-6.5.9.arch2.patch.zst
 
 #EDITING PKGBUILD
 #1. pkgbase: 'linux-git'
@@ -48,8 +52,10 @@ pkgver() {
   git describe --long --always | sed -E 's/^v//;s/([^-]*-g)/r\1/;s/-/./g;s/\.rc/rc/'
 }
 
-#4. in prepare(): 'cp ../config .config' -> 'cp ../../config .config' and
-# 'diff -u ../config .config' -> 'diff -u ../../config .config' 
+#4. in prepare():
+# 'patch -Np1 <../$src' -> 'patch -Np1 <../../$src'
+# 'cp ../config .config' -> 'cp ../../config .config'
+# 'diff -u ../config .config' -> 'diff -u ../../config .config'
 
 #5. do [5]: 2.2.2 - add before 'make -s kernelrelease > verion' string in prepare() function: 
 # make LSMOD=$HOME/.config/modprobed.db localmodconfig
