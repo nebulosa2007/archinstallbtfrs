@@ -13,7 +13,7 @@
 
 #Check needed packages
 sudo pacman -Syu --needed git base-devel devtools ccache mold
-ccache -M 10G #at least
+ccache -M 15G #at least
 #then edit /etc/makekpg.conf [3]: 3.3.1, 3.3.4, 3.5 and [4]: 2.1, 3.1
 
 #TODO: Errors when hook do 'mkinitcpio' for now
@@ -61,14 +61,17 @@ pkgver() {
 # make LSMOD=$HOME/.config/modprobed.db localmodconfig
 
 #6. comment 'make htmldocs' string in build () and '"$pkgbase-docs"' in pkgname at the end of PKGBUILD.
+#7. 'DEPMOD=/doesnt/exist modules_install' -> 'DEPMOD=/bin/true modules_install'
+#8. comment 'rm "$modulesdir"/{source,build}'
 
 
 #BISECTION SETUP
 # do [1]: 3
 cd src/linux
-git bisect start | tee -a ../../bisect.log
-git bisect good v6.5 | tee -a ../../bisect.log
-git bisect bad v6.6 | tee -a ../../bisect.log
+git bisect start
+git bisect good v6.5
+git bisect bad v6.6
+#it will shows how many steps you have to do.
 cd ../..
 
 
@@ -83,20 +86,22 @@ cd ../..
 #BUILD KERNEL
 time makepkg -efs
 sudo pacman -U linux-*
+# sudo grub-mkconfig -o /boot/grub/grub.cfg - if you use grub
 sudo reboot
-#test if regression is gone
+#choose linux-git to boot and double check that you booted in desired new kernel: uname -a
 
 
 #BISECTION PROCEDURE
+#test if regression is actual 
+cd ~/Bisect/linux/src/linux
 #if regression is gone
-git bisect good | tee -a /../../bisect.log
+git bisect good
 #otherwise
-git bisect bad | tee -a /../../bisect.log
-
+git bisect bad
+#git shows you how many steps are left
 #then go to #BUILD KERNEL again and rebuild kernel
 
-#in bisection process it will shows how many steps you have to do.
 #See [6]: 'Final bisect' for more information
 
 #CLEANING after
-#TODO: delete files and cache
+#TODO: command for deleting files and cache
