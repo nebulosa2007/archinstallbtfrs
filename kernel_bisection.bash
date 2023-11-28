@@ -40,13 +40,13 @@ git checkout 1c5e87b
 #Get kernel sources
 #If make just git clone you have download about 5Gb sources, so we can download only desired verision of kernel.
 #Lowest version for bisection is v6.4 (previous tag before v6.5) (about 400-500Mb or less)
-mkdir src && cd src
-git clone https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git --shallow-exclude v6.4
-cd ..
+mkdir -p src/linux-mainline && cd src/linux-mainline
+git clone https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git --shallow-exclude v6.4 .
+cd ../..
 
 #EDITING PKGBUILD
-#1. comment string: 'pkgbase=linux-mainline' and uncomment next string and edit to: 'pkgbase=linux-bicest'
-#2. _scrname=linux
+#1. comment string: 'pkgbase=linux-mainline', uncomment next string and edit to: 'pkgbase=linux-bicest'
+#2. comment also dependencies for 'htmldocs', strings: 'graphviz' 'imagemagick' 'python-sphinx' 'texlive-latexextra'
 #3. for building from the source need to add function pkgver(), before prepare() function:
 
 pkgver() {
