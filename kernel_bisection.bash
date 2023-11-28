@@ -66,7 +66,7 @@ pkgver() {
 
 #BISECTION SETUP
 # do [1]: 3
-cd src/linux
+cd src/linux-mainline
 git bisect start
 git bisect good v6.5
 git bisect bad v6.6
@@ -78,7 +78,7 @@ cd ../..
 #when you using 'makepkg -e', it means "use only local sources", function prepare() in PKGBUILD will not executing
 #it needs execute manually and ONLY ONCE (for ccache proper working).
 #see: https://bbs.archlinux.org/viewtopic.php?id=233021
-. /etc/makepkg.conf && . ./PKGBUILD && _srcname=$(readlink -f src/linux) && prepare && cd ../..
+. /etc/makepkg.conf && . ./PKGBUILD && _srcname=$(readlink -f src/linux-mainline) && prepare && cd ../..
 
 
 #BUILD KERNEL
@@ -90,7 +90,7 @@ sudo reboot
 
 #BISECTION PROCEDURE
 #test if regression is actual 
-cd ~/Bisect/linux/src/linux
+cd ~/Bisect/linux/src/linux-mainline
 #if regression is gone
 git bisect good
 #otherwise
@@ -109,5 +109,5 @@ git bisect log ../../git_bisect.log
 #CLEANING AFTER FIXING REGRESSION
 sudo pacman -Rsn linux-bisect-* linux-bisect-headers-*
 # sudo grub-mkconfig -o /boot/grub/grub.cfg - if you use grub
-cd ~ && rm -fr ~/Bicest
+cd ~ && rm -fr ~/Bicest/linux-mainline
 ccache -C
