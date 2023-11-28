@@ -34,7 +34,7 @@ mkdir -p Bisect && cd Bisect #For convinience
 git clone https://aur.archlinux.org/linux-mainline.git linux-mainline && cd linux-mainline
 
 #To found out which commit is needed
-# git log --pretty=oneline
+# git log --oneline
 git checkout 1c5e87b
 
 #Get kernel sources
@@ -106,8 +106,37 @@ git bisect bad
 git bisect log ../../git_bisect.log
 #And upload git_bisect.log to desired bugtracker.
 
+#Testing and applying patchfix
+mkdir ~/Bisect/linux-fix && cd ~/Bisect/linux-fix
+git clone https://aur.archlinux.org/linux-mainline.git linux-mainline && cd linux-mainline
+#git log --oneline
+git checkout 2ed0c03 #last 6.6 version of kernel, were regression was
+git clone https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git --shallow-exclude v6.5 src/linux-mainline
+cd src/linux-mainline
+#git log --oneline
+git checkout ffc253263a #switch sources to tag v6.6
+cd ../..
+
+#GO TO '#EDITING PKGBUILD' and to all items, except #3 - pkgver is fixed now, e.g. 'linux-fix'
+#Add file .patch to current folder (where PKGBUILD is) and add name of the file to sources in PKGBUILD, e.g.:
+source=(
+  "$_srcname::git+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git#tag=$_tag"
+  config         # the main kernel config file
+  0001-fix-regression.patch
+)
+#AND add 'SKIP' at the end:
+sha256sums=('SKIP'
+            'f8aacf7397a11585cef8da897b34cd27ecb93b260bf1b787d63482888b411360'
+            'SKIP')
+
+. /etc/makepkg.conf && . ./PKGBUILD && _srcname=$(readlink -f src/linux-mainline) && prepare && cd ../..
+#Make sure that string "Applying patch 0001-fix-regression.patch..." appears and there is no any errors
+
+#GO TO '#BUILD KERNEL'
+
+
 #CLEANING AFTER FIXING REGRESSION
-sudo pacman -Rsn linux-bisect-* linux-bisect-headers-*
+sudo pacman -Rsn linux-bisect-* linux-bisect-headers-* linux-fix-* linux-fix-headers-*
 # sudo grub-mkconfig -o /boot/grub/grub.cfg - if you use grub
-cd ~ && rm -fr ~/Bicest/linux-mainline
+cd ~ && rm -fr ~/Bicest/linux-fix && rm -fr ~/Bicest/linux-mainline
 ccache -C
