@@ -84,19 +84,21 @@ cd /mnt
 ## https://wiki.archlinux.org/title/Btrfs#Creating_a_subvolume
 btrfs subvolume create @
 btrfs subvolume create @home
-btrfs subvolume create @.snapshots
+btrfs subvolume create @snapshots
+btrfs subvolume create @swap
 
-#Check if it is everything ok? Should be "@root @home @.snapshots"
+#Check if it is everything ok? Should be "@ @home @snapshots @swap"
 ls
 #leave directory for unmount
 cd && umount /mnt
 
 #Remount subvolumes. Options for SSD
 ## https://ventureo.codeberg.page/source/file-systems.html#btrfs
-mount -o relatime,ssd_spread,compress=zstd,space_cache=v2,max_inline=256,discard=async,subvol=@ $MPART"1" /mnt
-mkdir /mnt/{home,.snapshots}
-mount -o relatime,ssd_spread,compress=zstd,space_cache=v2,max_inline=256,discard=async,subvol=@home $MPART"1" /mnt/home
-mount -o relatime,ssd_spread,compress=zstd,space_cache=v2,max_inline=256,discard=async,subvol=@.snapshots $MPART"1" /mnt/.snapshots
+mount -o ssd_spread,compress=zstd:3,max_inline=256,subvol=@ $MPART"1" /mnt
+mkdir /mnt/{home,.snapshots,.swap}
+mount -o ssd_spread,compress=zstd:3,max_inline=256,subvol=@home $MPART"1" /mnt/home
+mount -o ssd_spread,compress=zstd:3,max_inline=256,subvol=@snapshots $MPART"1" /mnt/.snapshots
+mount -o ssd_spread,compress=zstd:3,max_inline=256,subvol=@swap $MPART"1" /mnt/.swap
 
 ## https://bbs.archlinux.org/viewtopic.php?id=260291
 #Prevent making subvolumes by systemd
@@ -214,7 +216,7 @@ pacman -S avahi
 systemctl enable avahi-daemon
 
 exit
-umount  -R /mnt
+umount -R /mnt
 
 #For remove a flashstick
 poweroff
