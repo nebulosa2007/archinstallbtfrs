@@ -273,5 +273,11 @@ cd pikaur && makepkg -fsri && cd .. && rm -rf pikaur
 # sudo systemctl start pkgstats.timer
 # pkgstats submit
 
+## https://wiki.archlinux.org/title/Btrfs#Swap_file
+#Optional:
+# sudo btrfs filesystem mkswapfile --size 4g --uuid clear /.swap/swapfile
+# swapon /.swap/swapfile
+# echo  "/.swap/swapfile none swap defaults 0 0" | sudo tee -a /etc/fstab
+
 #Todo https://wiki.archlinux.org/title/Btrfs#Booting_into_snapshots grub-btrfs
 #Optional: https://ventureo.codeberg.page/source/extra-optimizations.html#alhp-repository
