@@ -112,7 +112,7 @@ sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
 
 ## https://wiki.archlinux.org/title/Pacman#Skip_files_from_being_installed_to_system
 #Skip installing man and help pages, other locales for all packages in system
-sed -i 's/#NoExtract   =/NoExtract   = usr\/share\/man\/* usr\/share\/help\/* usr\/share\/locale\/* !usr\/share\/locale\/en_GB* !usr\/share\/locale\/locale.alias/' /etc/pacman.conf
+sed -i 's|#NoExtract   =|NoExtract   = usr/share/man/* usr/share/help/* usr/share/locale/* !usr/share/locale/en_GB* !usr/share/locale/locale.alias/ usr/share/gtk-doc/html/* usr/share/*/translations/*.qm usr/share/*/nls/*.qm usr/share/qt/phrasebooks/*.qph usr/share/qt/translations/*.pak !*/en-US.pak|' /etc/pacman.conf
 
 ## https://wiki.archlinux.org/title/Installation_guide#Install_essential_packages
 #Install archlinux base. Standard linux kernel.
