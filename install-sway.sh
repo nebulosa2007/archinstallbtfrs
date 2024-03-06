@@ -16,8 +16,3 @@ pikaur -S polkit pipewire-media-session mesa xdg-utils blueberry seahorse
 
 #For Headless machines
 sudo pacman -S swayvnc
-
-#TODO
-# linked folders .config/{lavalauncher,sway,waybar}
-# ln -s /home/ds/instance/config/sway 		/home/ds/.config/sway
-# ln -s /home/ds/instance/config/waybar 		/home/ds/.config/waybar
