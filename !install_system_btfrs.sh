@@ -118,8 +118,12 @@ sed -i 's|#NoExtract   =|NoExtract   = usr/share/man/* usr/share/help/* !/usr/sh
 #Install archlinux base. Standard linux kernel.
 pacstrap -K /mnt base linux grub btrfs-progs sudo openssh micro # minimum - VPS
 
-# For AMD - amd-ucode instead intel-ucode!
-pacstrap /mnt intel-ucode # + other soft - desktop
+##https://wiki.archlinux.org/title/Microcode
+#If VPS and other virtualisations skip this step!
+#For AMD - amd-ucode
+#pacstrap /mnt amd-ucode
+#For Intel - intel-ucode
+#pacstrap /mnt intel-ucode
 
 ## https://wiki.archlinux.org/title/Iwd
 #For wi-fi
@@ -144,6 +148,7 @@ printf "127.0.0.1 localhost\n::1       localhost\n127.0.0.1 $M.localhost $M\n" >
 ## https://wiki.archlinux.org/title/Mkinitcpio/Minimal_initramfs
 #On a BTRFS ONLY disk (without separate partition fat for EFI) remove fsck HOOK form /etc/mkinitcpio.conf
 # sed -i "s/PRESETS=('default' 'fallback')/PRESETS=('default')/" /etc/mkinitcpio.d/linux.preset
+# sed -i "s|ALL_microcode=(/boot/*-ucode.img)|#ALL_microcode=(/boot/*-ucode.img)|" /etc/mkinitcpio.d/linux.preset
 # mkinitcpio -P
 # rm /boot/initramfs-linux-fallback.img
 
@@ -163,6 +168,7 @@ grub-install --target=i386-pc --recheck /dev/sda #Or /dev/vda for VPS
 ## https://ventureo.codeberg.page/source/kernel-parameters.html
 # sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet"/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash rootfstype=btrfs raid=noautodetect mitigations=off preempt=none audit=0 page_alloc.shuffle=1 split_lock_detect=off pci=pcie_bus_perf"/' /etc/default/grub
 # sed -i "s/rootfstype=btrfs /rootfstype=btrfs lpj=$(dmesg | grep -Po '(?<=BogoMIPS\(lpj=)(\d+)') /" /etc/default/grub
+# echo "GRUB_EARLY_INITRD_LINUX_STOCK=''" >> /etc/defualt/grub
 grub-mkconfig -o /boot/grub/grub.cfg
 
 #Double check files!
