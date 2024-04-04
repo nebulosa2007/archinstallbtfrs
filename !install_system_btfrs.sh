@@ -138,6 +138,8 @@ cp -i /etc/pacman.conf /mnt/etc/pacman.conf
 genfstab -U /mnt >> /mnt/etc/fstab
 arch-chroot /mnt
 ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime && hwclock --systohc #Use your own region
+# fix for line 115...
+touch /usr/share/locale/locale.alias
 sed -i 's/#en_GB.UTF-8/en_GB.UTF-8/' /etc/locale.gen && locale-gen
 echo "LANG=en_GB.UTF-8" > /etc/locale.conf
 
@@ -167,8 +169,8 @@ grub-install --target=i386-pc --recheck /dev/sda #Or /dev/vda for VPS
 # sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=0/' /etc/default/grub
 ## https://ventureo.codeberg.page/source/kernel-parameters.html
 # sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet"/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash rootfstype=btrfs raid=noautodetect mitigations=off preempt=none audit=0 page_alloc.shuffle=1 split_lock_detect=off pci=pcie_bus_perf"/' /etc/default/grub
-# sed -i "s/rootfstype=btrfs /rootfstype=btrfs lpj=$(dmesg | grep -Po '(?<=BogoMIPS\(lpj=)(\d+)') /" /etc/default/grub
-# echo "GRUB_EARLY_INITRD_LINUX_STOCK=''" >> /etc/defualt/grub
+# sed -i "s/rootfstype=btrfs /rootfstype=btrfs lpj=$(dmesg | grep -Po '(?<=BogoMIPS \(lpj=)(\d+)') /" /etc/default/grub
+# echo "GRUB_EARLY_INITRD_LINUX_STOCK=''" >> /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg
 
 #Double check files!
