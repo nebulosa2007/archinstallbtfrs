@@ -62,7 +62,7 @@ MPART="/dev/sda" # or "/dev/vda" on case of VPS
 #Leave some free space for SSD long live. See "SSD overprovisioning" for more info
 #ex. 232,9GB round partition to 230Gb. 2,9GB - will be free space, ~10%
 #BIOS: one partition
-#EFI: gpt, first partition should be efi, 300Mb, ef00 type, all other space - one partition.
+#EFI: gpt, first partition should be efi, 10Mb, ef00 type, all other space - one partition.
 
 ## https://wiki.archlinux.org/title/Fdisk - cfidsk - a curses-based user interface
 #for delete boot table add -z
@@ -70,8 +70,8 @@ cfdisk -z $MPART
 
 #for EFI
 # mkfs.fat -F32 /dev/sda1
-# mkdir /mnt/boot
-# mount /dev/sda1 /mnt/boot
+# mkdir /mnt/boot/efi
+# mount /dev/sda1 /mnt/boot/efi
 
 ## https://wiki.archlinux.org/title/Btrfs#File_system_creation
 #formating one partition in my case, with EFI it will be sda2 or vda2
@@ -162,7 +162,7 @@ grub-install --target=i386-pc --recheck /dev/sda #Or /dev/vda for VPS
 ## https://wiki.archlinux.org/title/GRUB#Installation
 #for EFI:
 # pacman -S efibootmgr
-# grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+# grub-install
 #Optional
 ## https://wiki.archlinux.org/title/GRUB#Configuration
 # sed -i 's/#GRUB_DISABLE_OS_PROBER=false/GRUB_DISABLE_OS_PROBER=false/' /etc/default/grub
