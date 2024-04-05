@@ -70,8 +70,7 @@ cfdisk -z $MPART
 
 #for EFI
 # mkfs.fat -F32 /dev/sda1
-# mkdir /mnt/boot/efi
-# mount /dev/sda1 /mnt/boot/efi
+# mount -m /dev/sda1 /mnt/boot/efi
 
 ## https://wiki.archlinux.org/title/Btrfs#File_system_creation
 #formating one partition in my case, with EFI it will be sda2 or vda2
@@ -158,7 +157,7 @@ passwd #For root
 
 ## https://wiki.archlinux.org/title/GRUB#Installation_2
 #install GRUB on BIOS
-grub-install --target=i386-pc --recheck /dev/sda #Or /dev/vda for VPS
+grub-install --recheck /dev/sda #Or /dev/vda for VPS
 ## https://wiki.archlinux.org/title/GRUB#Installation
 #for EFI:
 # pacman -S efibootmgr
