@@ -62,7 +62,7 @@ MPART="/dev/sda" # or "/dev/vda" on case of VPS
 #Leave some free space for SSD long live. See "SSD overprovisioning" for more info
 #ex. 232,9GB round partition to 230Gb. 2,9GB - will be free space, ~10%
 #BIOS: one partition
-#EFI: gpt, first partition should be efi, 10Mb, ef00 type, all other space - one partition.
+#EFI: gpt, first partition should be efi, 16Mb, ef00 type, all other space - one partition.
 
 ## https://wiki.archlinux.org/title/Fdisk - cfidsk - a curses-based user interface
 #for delete boot table add -z
