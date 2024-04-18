@@ -109,9 +109,22 @@ lsblk
 ## https://wiki.archlinux.org/title/Pacman#Enabling_parallel_downloads
 sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
 
-## https://wiki.archlinux.org/title/Pacman#Skip_files_from_being_installed_to_system
+## https://wiki.archlinux.org/title/Pacman/Tips_and_tricks#Installing_only_content_in_required_languages
 #Skip installing man and help pages, other locales for all packages in system
-sed -i 's|#NoExtract   =|NoExtract   = usr/share/man/* usr/share/help/* !/usr/share/locale/locale.alias usr/share/locale/* !usr/share/locale/en_GB* !usr/share/locale/locale.alias/ usr/share/gtk-doc/html/* usr/share/*/translations/*.qm usr/share/*/nls/*.qm usr/share/qt/phrasebooks/*.qph usr/share/qt/translations/*.pak !*/en-US.pak|' /etc/pacman.conf
+TODO: one line adding
+NoExtract = usr/share/help/* !usr/share/help/C/*
+NoExtract = usr/share/gtk-doc/html/*
+NoExtract = usr/share/locale/* usr/share/X11/locale/*/* usr/share/i18n/locales/* opt/google/chrome/locales/* !usr/share/X11/locale/C/*
+NoExtract = !usr/share/X11/locale/compose.dir !usr/share/X11/locale/iso8859-1/*
+NoExtract = !*locale*/en*/* !usr/share/*locale*/locale.*
+NoExtract = !usr/share/*locales/en_?? !usr/share/*locales/i18n* !usr/share/*locales/iso*
+NoExtract = usr/share/i18n/charmaps/* !usr/share/i18n/charmaps/UTF-8.gz !usr/share/i18n/charmaps/ANSI_X3.4-1968.gz
+NoExtract = !usr/share/*locales/trans*
+NoExtract = !usr/share/*locales/C !usr/share/*locales/POSIX
+NoExtract = usr/share/man/* !usr/share/man/man*
+NoExtract = usr/share/*/translations/*.qm usr/share/*/nls/*.qm usr/share/qt/phrasebooks/*.qph usr/share/qt/translations/*.pak !*/en-GB.pak
+NoExtract = usr/share/*/locales/*.pak opt/*/locales/*.pak usr/lib/*/locales/*.pak !*/en-GB.pak
+NoExtract = usr/lib/libreoffice/help/*
 
 ## https://wiki.archlinux.org/title/Installation_guide#Install_essential_packages
 #Install archlinux base. Standard linux kernel.
