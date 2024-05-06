@@ -16,4 +16,3 @@ sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
 sed -i 's|#Server = https://mirror.yandex.ru|Server = https://mirror.yandex.ru|' /etc/pacman.d/mirrorlist
 pacman -Syy
 pacstrap /mnt base base-devel linux linux-firmware linux-headers grub
-

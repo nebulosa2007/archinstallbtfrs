@@ -12,4 +12,3 @@ else
         cliphist list | grep "^${indexes[$index]}" | cliphist decode | wl-copy -n
     fi
 fi
-

@@ -14,7 +14,7 @@ sudo systemctl enable --now gdm
 #sudo pacman -S --needed git
 #git clone https://aur.archlinux.org/timeshift.git
 #cd timeshift && makepkg -fsri && cd .. && rm -fr timeshift
-#or 
+#or
 pikaur -S timeshift
 
 #git clone https://aur.archlinux.org/timeshift-autosnap.git

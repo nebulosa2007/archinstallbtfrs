@@ -3,7 +3,7 @@
 ## https://wiki.archlinux.org/title/Install_Arch_Linux_via_SSH
 #You can use remote/headless machine installation through ssh
 # ssh -o StrictHostKeyChecking=no -o "UserKnownHostsFile /dev/null" root@archiso.lan # (or root@ip_new_arch_install)
-#For VirtualBox - Nat forwarding: https://www.virtualbox.org/manual/ch06.html#natforward 
+#For VirtualBox - Nat forwarding: https://www.virtualbox.org/manual/ch06.html#natforward
 #or in Oracle VM: Settings-Network-Advanced-Port Forwarding: Protocol: TCP, Host Port:2222, Guset IP 10.0.2.15 (check 'ip a' on guest installation), Guest Port:22
 #On a host machine: ssh root@localhost -p 2222
 
@@ -17,7 +17,7 @@
 ## [Match]
 ## Name=en*
 ## Name=eth*
-## 
+##
 ## [Network]
 ## Gateway=......
 ## Address=....../24  - IPv4
@@ -45,7 +45,7 @@ ssh -o StrictHostKeyChecking=no -o "UserKnownHostsFile /dev/null" root@ip_server
 #main commands are:
 # tmux detach
 # tmux ls
-# tmux attach or tmux attach -t session1 
+# tmux attach or tmux attach -t session1
 tmux
 
 
@@ -74,7 +74,7 @@ cfdisk -z $MPART
 
 ## https://wiki.archlinux.org/title/Btrfs#File_system_creation
 #formating one partition in my case, with EFI it will be sda2 or vda2
-#you may add -f: force format, -L virtarch - for label 
+#you may add -f: force format, -L virtarch - for label
 mkfs.btrfs $MPART"1"
 
 #making btrfs subvolumes due to https://github.com/hirak99/yabsnap#recommended-subvolume-layout

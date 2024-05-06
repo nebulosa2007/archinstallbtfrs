@@ -53,7 +53,7 @@ output HDMI-A-2 resolution 1920x1080 position 1366,0
 exec swayidle -w \
           timeout 300 'swaylock -f -c 000000; swaymsg "input * xkb_switch_layout 0"' \
           timeout 600 'swaymsg "output * dpms off"; swaymsg "input * xkb_switch_layout 0"' resume 'swaymsg "output * dpms on"; swaymsg "input * xkb_switch_layout 0"; killall -SIGUSR2 waybar' \
-          before-sleep 'swaylock -f -c 000000; swaymsg "input * xkb_switch_layout 0"' 
+          before-sleep 'swaylock -f -c 000000; swaymsg "input * xkb_switch_layout 0"'
 #
 # This will lock your screen after 300 seconds of inactivity, then turn off
 # your displays after another 300 seconds, and turn your screens back on when
@@ -70,12 +70,12 @@ input "2:8:AlpsPS/2_ALPS_GlidePoint" {
         middle_emulation enabled
         drag enabled
         pointer_accel 0.5
-    	accel_profile "flat"
+        accel_profile "flat"
 }
 input "1:1:AT_Translated_Set_2_keyboard" {
-	xkb_capslock disable
-	xkb_layout us,ru
-	xkb_options grp:caps_toggle,grp_led:caps
+    xkb_capslock disable
+    xkb_layout us,ru
+    xkb_options grp:caps_toggle,grp_led:caps
 }
 
 # You can get the names of your inputs by running: swaymsg -t get_inputs
@@ -85,21 +85,21 @@ input "1:1:AT_Translated_Set_2_keyboard" {
 #
 # Basics:
 #
-	#Printscreen
-	bindsym Print exec grim -g "$(slurp)" - | wl-copy
-	bindsym Alt+Print exec grim 
-	
+    #Printscreen
+    bindsym Print exec grim -g "$(slurp)" - | wl-copy
+    bindsym Alt+Print exec grim
+
     # Start a terminal
     bindsym $mod+Return exec $term
 
     # Kill focused window
     bindsym --to-code {
-    	$mod+Shift+q kill
+        $mod+Shift+q kill
     }
 
     # Start your launcher
     bindsym --to-code {
-    	$mod+d exec swaymsg "input * xkb_switch_layout 0" && $menu
+        $mod+d exec swaymsg "input * xkb_switch_layout 0" && $menu
     }
 
     # Drag floating windows by holding down $mod and left mouse button.
@@ -111,19 +111,19 @@ input "1:1:AT_Translated_Set_2_keyboard" {
 
     # Reload the configuration file
     bindsym --to-code {
-    	$mod+Shift+c reload
+        $mod+Shift+c reload
     }
 
-	# Lock Screen immediately
-	    bindsym --to-code {
-	    	$mod+l exec swaylock -f -c 000000 && swaymsg input '*' xkb_switch_layout 0
-	}
-	
+    # Lock Screen immediately
+        bindsym --to-code {
+            $mod+l exec swaylock -f -c 000000 && swaymsg input '*' xkb_switch_layout 0
+    }
+
 
     # Exit sway (logs you out of your Wayland session)
     bindsym --to-code {
     $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
-	}
+    }
 #
 # Moving around:
 #
@@ -247,7 +247,7 @@ bindsym --locked XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
 #bindsym --locked XF86MonBrightnessUp exec brightnessctl set +5%
 
 bar {
-	swaybar_command waybar
+    swaybar_command waybar
 }
 }
 

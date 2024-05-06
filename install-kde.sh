@@ -3,7 +3,7 @@
 # Step 1. Install Xorg
 sudo pacman -S xorg-server
 
-# Install drivers 
+# Install drivers
 # lspci -v | grep -A1 -e VGA -e 3D
 # https://wiki.archlinux.org/title/Xorg#Driver_installation
 # ATI + Intel

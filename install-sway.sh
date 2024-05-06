@@ -5,13 +5,13 @@ pikaur -S sway swaylock swayidle foot waybar xorg-xwayland swaybg grim slurp wl-
 mkdir -p ~/.config/sway && cp /etc/sway/config ~/.config/sway/config
 
 
-#Enable login manager 
+#Enable login manager
 # pikaur -S ly && sudo systemctl enable --now ly
-# or 
+# or
 printf "\nif [ -z \$DISPLAY ] && [ \"\$(tty)\" = \"/dev/tty1\" ]; then\n  exec sway\nfi" >> ~/.bash_profile
 
 
-#Other stuff 
+#Other stuff
 pikaur -S polkit pipewire-media-session mesa xdg-utils blueberry seahorse
 
 #For Headless machines

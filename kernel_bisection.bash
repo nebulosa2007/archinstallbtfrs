@@ -22,7 +22,7 @@ ccache -M 15G #at least
 
 
 #GET SOURCES
-mkdir -p Bisect && cd Bisect #For convinience 
+mkdir -p Bisect && cd Bisect #For convinience
 
 #Versions (tags) can be found here: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/refs/tags
 #Unfortunatly, vanilla kernel sources has only tags 6.6, 6.5, etc not an 6.6.1, 6.5.8 ... so it need make more steps (build kernels) as it should be.
@@ -57,7 +57,7 @@ pkgver() {
 # 'cp ../config .config' -> 'cp ../../config .config'
 # 'diff -u ../config .config || :' -> 'diff -u ../../config .config || :'
 
-#5. do [5]: 2.2.2 - add after 'diff -u ../../config .config || :' string in prepare() function: 
+#5. do [5]: 2.2.2 - add after 'diff -u ../../config .config || :' string in prepare() function:
 # 'make LSMOD=$HOME/.config/modprobed.db localmodconfig'
 
 #6. comment '_make htmldocs' string in build () and '"$pkgbase-docs"' in pkgname at the end of PKGBUILD.
@@ -89,7 +89,7 @@ sudo reboot
 #choose linux-git to boot and double check that you booted in desired new kernel: uname -a
 
 #BISECTION PROCEDURE
-#test if regression is actual 
+#test if regression is actual
 cd ~/Bisect/linux/src/linux-mainline
 #if regression is gone
 git bisect good

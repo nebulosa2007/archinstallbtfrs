@@ -46,7 +46,7 @@ sudo sed -i 's/ kms / /' /etc/mkinitcpio.conf
 sudo mkinitcpio -P
 #DMPS Tuning
 printf "Section \"ServerFlags\"\n Option \"IgnoreABI\" \"1\"\n Option \"StandbyTime\" \"0\"\n Option \"SuspendTime\" \"0\"\n Option \"OffTime\" \"0\"\n Option \"BlankTime\" \"0\"\nEndSection" | sudo tee /etc/X11/xorg.conf.d/30-dpms.conf
-#One TV as only display (for good resolution when TV is off) 
+#One TV as only display (for good resolution when TV is off)
 ##https://wiki.archlinux.org/title/NVIDIA/Tips_and_tricks#X_with_a_TV_(DFP)_as_the_only_display
 #Supress NVRM messages in dmesg
 sudo sed -i "s/quiet /quiet video=vesa:off /" /etc/default/grub
