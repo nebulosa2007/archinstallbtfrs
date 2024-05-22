@@ -30,3 +30,4 @@ border-size=0
 default-timeout=500
 group-by=category
 text-alignment=center
+text-color=#ffffff
