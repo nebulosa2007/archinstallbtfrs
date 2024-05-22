@@ -97,17 +97,6 @@ button:hover {
     margin: 0px 4px;
 }
 
-#custom-telegram,
-#custom-firefox,
-#custom-youtubemusic,
-#custom-files,
-#custom-terminal,
-#custom-streamplay {
-    font-size: 20px;
-    padding: 0px 5px;
-    color: #ffffff;
-}
-
 #custom-gsconnect {
     font-size: 13px;
     padding: 0px 5px;
@@ -115,10 +104,10 @@ button:hover {
 }
 
 
-#custom-arch{
-    font-size: 30px;
+#custom-niri_workspaces{
+    font-size: 18px;
     padding: 0px 5px;
-    color: #1793d1;
+    color: #ffffff;
 }
 
 #custom-logout{

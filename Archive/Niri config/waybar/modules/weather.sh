@@ -36,29 +36,32 @@ case ${weather[2]} in
 "fair" | "clearsky" | "clear" | "sunny")
     icon=" "
     ;;
-"partlycloudy" | "cloudy" | "overcast")
+"partlycloudy" | "partly cloudy" | "cloudy" | "overcast")
     icon="  "
     ;;
-"mist" | "fog")
+"mist" | "fog" | "freezing fog")
     icon=" "
     ;;
-"lightrain" | "rain")
+"lightrain" | "patchy rain possible" | "patchy light drizzle" | "light drizzle" | "rain")
     icon=" "
     ;;
-"lightrainshowers")
+"lightrainshowers" | "patchy light rain" | "light rain" )
     icon="🌦 "
     ;;
-"heavyrain" | "rainshowers")
+"heavyrain" | "rainshowers" | "heavyrainshowers" )
     icon=" "
     ;;
-"snow" | "lightsnow" | "lightsleet")
+"snow" | "sleet" | "lightsnow" | "lightsleet" | "light snow" | "snow shower" | "patchy snow possible" | "patchy sleet possible" | "patchy freezing drizzle possible" | "freezing drizzle" | "heavy freezing drizzle" | "light freezing rain" | "moderate or heavy freezing rain" | "light sleet" | "ice pellets" | "light sleet showers" | "moderate or heavy sleet showers")
     icon=" "
     ;;
-"blowingsnow")
+"blowing snow" | "moderate or heavy sleet" | "patchy light snow" | "light snow showers")
     icon=" "
     ;;
-"heavysnow" | "blizzard")
+"heavysnow" | "blizzard" | "patchy moderate snow" | "moderate snow" | "patchy heavy snow" | "heavy snow" | "moderate or heavy snow with thunder" | "moderate or heavy snow showers")
     icon=" "
+    ;;
+"thundery outbreaks possible" | "patchy light rain with thunder" | "moderate or heavy rain with thunder" | "patchy light snow with thunder")
+    icon="  "
     ;;
 *)
     icon=" "

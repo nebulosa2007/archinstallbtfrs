@@ -8,6 +8,12 @@ input {
         }
         track-layout "window"
     }
+    touchpad {
+        tap
+        dwt
+        dwtp
+        natural-scroll
+    }
 }
 layout {
     gaps 16
@@ -31,7 +37,7 @@ binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
     Mod+T { spawn "kgx"; }
     Mod+D { spawn "fuzzel"; }
-    // Super+Alt+L { spawn "swaylock"; }
+    Super+Alt+L { spawn "swaylock"; }
     // XF86TouchpadToggle { spawn ; }
             XF86AudioMute { spawn "bash" "-c" "pactl set-sink-mute @DEFAULT_SINK@ toggle && notify-send -c \"system\" \" $(pactl get-sink-mute @DEFAULT_SINK@)\""; }
      XF86AudioRaiseVolume { spawn "bash" "-c" "pactl set-sink-volume @DEFAULT_SINK@ +5%  && notify-send -c \"system\" \" $(pactl get-sink-volume @DEFAULT_SINK@ | head -1 | tr -s ' ' | cut -d ' ' -f1,5)\""; }
@@ -40,6 +46,14 @@ binds {
       XF86MonBrightnessUp { spawn "bash" "-c" "brightnessctl -c backlight set +1 && notify-send -c \"system\" \" Brightness: $(brightnessctl -m | cut -d',' -f4)\""; }
     //        XF86Display { spawn ; }
     //        XF86Suspend { spawn ; }
+    // Additional for VAIO laptops
+    // Eject CD-ROM key
+                XF86Eject { spawn "~/.config/waybar/modules/unmount.sh" "unmount"; }
+    // ASSIST key
+                     Help { spawn "playerctl" "play-pause"; }
+    // WEB key
+             XF86HomePage { spawn "playerctl" "next"; }
+    // VAIO key has no press code
     Mod+Q { close-window; }
     Mod+Left  { focus-column-left; }
     Mod+Down  { focus-window-down; }
@@ -142,6 +156,68 @@ hotkey-overlay {
     skip-at-startup
 }
 
+animations {
+    slowdown 2.0
+    window-open {
+      duration-ms 150
+      curve "linear"
+      custom-shader r"
+
+    vec4 expanding_circle(vec3 coords_geo, vec3 size_geo) {
+    vec3 coords_tex = niri_geo_to_tex * coords_geo;
+    vec4 color = texture2D(niri_tex, coords_tex.st);
+    vec2 coords = (coords_geo.xy - vec2(0.5, 0.5)) * size_geo.xy * 2.0;
+    coords = coords / length(size_geo.xy);
+    float p = niri_clamped_progress;
+    if (p * p <= dot(coords, coords))
+    color = vec4(0.0);
+
+    return color;
+  }
+
+    vec4 open_color(vec3 coords_geo, vec3 size_geo) {
+    return expanding_circle(coords_geo, size_geo);
+   }
+  "
+ }
+
+   window-close {
+      duration-ms 250
+      curve "linear"
+      custom-shader r"
+
+    vec4 fall_and_rotate(vec3 coords_geo, vec3 size_geo) {
+    float progress = niri_clamped_progress * niri_clamped_progress;
+    vec2 coords = (coords_geo.xy - vec2(0.5, 1.0)) * size_geo.xy;
+    coords.y -= progress * 1440.0;
+    float random = (niri_random_seed - 0.5) / 2.0;
+    random = sign(random) - random;
+    float max_angle = 0.5 * random;
+    float angle = progress * max_angle;
+    mat2 rotate = mat2(cos(angle), -sin(angle), sin(angle), cos(angle));
+    coords = rotate * coords;
+    coords_geo = vec3(coords / size_geo.xy + vec2(0.5, 1.0), 1.0);
+    vec3 coords_tex = niri_geo_to_tex * coords_geo;
+    vec4 color = texture2D(niri_tex, coords_tex.st);
+
+    return color;
+  }
+
+    vec4 close_color(vec3 coords_geo, vec3 size_geo) {
+    return fall_and_rotate(coords_geo, size_geo);
+     }
+    "
+   }
+}
+
+workspace "default"
+workspace "work"
+
+window-rule {
+    geometry-corner-radius 12
+    clip-to-geometry true
+}
+
 window-rule {
     match app-id=r#"(firefox|org.gnome.Meld)"#
     exclude title=r#"(Open File|Save As|File Upload)"#
@@ -173,4 +249,15 @@ window-rule {
 window-rule {
     match is-active=false
     opacity 0.8
+}
+
+window-rule {
+    match app-id="virt-manager" title="Virtual Machine Manager"
+    default-column-width { proportion 0.33333; }
+}
+
+window-rule {
+    match app-id="virt-manager" title=r#"on QEMU/KVM$"#
+    default-column-width { proportion 0.8; }
+    open-on-workspace "work"
 }

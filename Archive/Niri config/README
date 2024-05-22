@@ -3,8 +3,8 @@ Installation:
 1. Copy all folders to .config
 2. Install needed software:
 For Niri:
-   wl-clipboard cliphist polkit-kde-agent playerctl swaybg wlsunset
-   mako waybar libpulse gnome-console brightnessctl libnotify
+   wl-clipboard cliphist polkit-gnome playerctl swaybg wlsunset
+   mako waybar libpulse gnome-console brightnessctl libnotify darkman
 Optional:
    meld telegram-desktop nautilus libreoffice-fresh ly
 
@@ -14,20 +14,18 @@ For Waybar (for this config):
    pulseaudio-alsa pulseaudio-bluetooth python-pydbus telegram-desktop ttf-font-logos
    wireguard-tools wl-clipboard ydotool youtube-music-bin
 
-Also check instructions for waybar: head -7 $HOME/.config/waybar/config
+Also check instructions for waybar: head -7 ~/.config/waybar/config
 
 3. Niri setting:
 Make a link to wallpaper:
-ln -s $HOME/.config/niri/wallpaper $HOME/Pictures/myfavorite_wallpaper.jpg
-
-Set dark theme:
-dconf write /org/gnome/desktop/interface/color-scheme '"prefer-dark"'
+ln -sf ~/Pictures/Wallpapers/niri_light.jpg ~/.config/niri/wallpaper
 
 Needed services:
 mkdir -p ~/.config/systemd/user/niri.service.wants
 ln -s ~/.config/systemd/user/cliphist.service ~/.config/systemd/user/niri.service.wants/
+ln -s ~/.config/systemd/user/darkman.service ~/.config/systemd/user/niri.service.wants/
 ln -s /usr/lib/systemd/user/mako.service ~/.config/systemd/user/niri.service.wants/
-ln -s /usr/lib/systemd/user/plasma-polkit-agent.service ~/.config/systemd/user/niri.service.wants/
+ln -s /usr/lib/systemd/user/gnome-polkit-agent.service ~/.config/systemd/user/niri.service.wants/
 ln -s ~/.config/systemd/user/playctld.service ~/.config/systemd/user/niri.service.wants/
 ln -s ~/.config/systemd/user/swaybg.service ~/.config/systemd/user/niri.service.wants/
 ln -s /usr/lib/systemd/user/waybar.service ~/.config/systemd/user/niri.service.wants/
