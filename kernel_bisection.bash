@@ -1,3 +1,6 @@
+#!/bin/false
+# shellcheck shell=bash
+
 #Use case is: kernel 6.6.0.arch1 ("bad") has regression and kernel 6.5.9.arch2 ("good") is not. We need make kernel bisection to findout witch commit is cause.
 
 #Articles:

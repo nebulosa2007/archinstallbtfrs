@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/env bash
 
 # wttr.in's location service is a bit shit
 location=$1

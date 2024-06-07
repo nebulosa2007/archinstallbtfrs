@@ -1,3 +1,6 @@
+#!/bin/false
+# shellcheck shell=bash
+
 ## INSTALLING SWAY
 
 #Install sway environment

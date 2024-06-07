@@ -1,3 +1,6 @@
+#!/bin/false
+# shellcheck shell=bash
+
 ## INSTALLING GNOME AND TIMESHIFT
 
 #pikaur - AUR helper, smallest one

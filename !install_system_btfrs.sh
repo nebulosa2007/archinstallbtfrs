@@ -1,3 +1,6 @@
+#!/bin/false
+# shellcheck shell=bash
+
 ## INSTALLATION ARCHLINUX BTRFS with ZRAM and snapshots
 
 ## https://wiki.archlinux.org/title/Install_Arch_Linux_via_SSH

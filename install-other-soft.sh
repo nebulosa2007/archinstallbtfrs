@@ -1,3 +1,6 @@
+#!/bin/false
+# shellcheck shell=bash
+
 ## INSTALLING OTHER SOFT
 
 U=nebulosa

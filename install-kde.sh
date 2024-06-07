@@ -1,3 +1,6 @@
+#!/bin/false
+# shellcheck shell=bash
+
 ## INSTALLING KDE
 
 # Step 1. Install Xorg

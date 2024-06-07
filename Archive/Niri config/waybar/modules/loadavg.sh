@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/env bash
 
 IFS=" " read -r -a load < /proc/loadavg
 ZPROCESSES=$(pgrep --runstates Z -a | sed -z 's/[<>]//g;s|\n|\\\\n|g')

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/env bash
 
 COUNTUPD=$(/usr/bin/pacman -Qu | grep -v "\[ignored\]" | /usr/bin/wc -l)
 IMPPKGS="linux"

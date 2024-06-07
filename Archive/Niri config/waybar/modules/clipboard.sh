@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/env bash
 
 if [ "$1" = "wipe" ]; then
     cliphist wipe
@@ -12,7 +12,7 @@ else
         cliphist list | grep "^${indexes[$index]}" | cliphist decode | wl-copy -n
     fi
 fi
-#!/bin/bash
+#!/bin/env bash
 
 if [ "$1" = "wipe" ]; then
     cliphist wipe

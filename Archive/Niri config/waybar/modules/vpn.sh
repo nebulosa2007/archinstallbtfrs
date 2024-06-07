@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/env bash
 
 echo "Toggle switch VPN: $1 interface..."
 switcher=$( [ -d /proc/sys/net/ipv4/conf/"$1" ] && echo "stop" || echo "start";)

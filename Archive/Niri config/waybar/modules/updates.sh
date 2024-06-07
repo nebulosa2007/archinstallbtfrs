@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/env bash
 
 if [ -z "$1" ]; then
     important_packages="linux systemd"

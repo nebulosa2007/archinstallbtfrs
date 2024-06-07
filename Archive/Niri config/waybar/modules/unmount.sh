@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/env bash
 
 # Unmount and power off any user mounted drives.
 mapfile -t ArrayDisks < <(lsblk -n -p -S -o PATH,TRAN | grep usb | cut -d " " -f1)

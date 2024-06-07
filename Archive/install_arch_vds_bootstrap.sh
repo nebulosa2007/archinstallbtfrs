@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/false
+# shellcheck shell=bash
 
 cd /tmp
 wget https://mirror.yandex.ru/archlinux/iso/2022.05.01/archlinux-bootstrap-2022.05.01-x86_64.tar.gz{,.sig}

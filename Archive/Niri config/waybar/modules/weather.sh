@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/env bash
 
 # Set up caching to avoid tons of reqs to server
 cachedir=$HOME/.cache/rbn
