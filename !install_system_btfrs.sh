@@ -221,8 +221,6 @@ printf "[zram0]\nzram-size = ram / 2\ncompression-algorithm = zstd\nswap-priorit
 #Other
 ## https://wiki.archlinux.org/title/Reflector#systemd_timer
 # systemctl enable reflector.timer
-## https://wiki.archlinux.org/title/Solid_state_drive#Periodic_TRIM
-systemctl enable fstrim.timer
 ## https://wiki.archlinux.org/title/Systemd-homed
 systemctl enable systemd-homed
 ## https://wiki.archlinux.org/title/OpenSSH#Daemon_management
