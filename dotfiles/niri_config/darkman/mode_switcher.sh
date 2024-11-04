@@ -33,7 +33,7 @@ light)
     # Set mode for GTK3 applications
         gsettings set org.gnome.desktop.interface gtk-theme Adwaita
     # Set mode for GTK4 applications
-        niri msg action do-screen-transition && dconf write /org/gnome/desktop/interface/color-scheme '"prefer-light"'
+        niri msg action do-screen-transition && gsettings set org.gnome.desktop.interface color-scheme prefer-light
 
     # Switch wallpaper
         ln -sf "$HOME"/Pictures/Wallpapers/niri_light.jpg "$HOME"/.config/niri/wallpaper
@@ -43,16 +43,16 @@ light)
     # Set mako
         makoctl mode -r dark
     # Set fuzzel
-        ln -sf $HOME/.config/fuzzel/light_fuzzel.ini $HOME/.config/fuzzel/fuzzel.ini
+        ln -sf "$HOME"/.config/fuzzel/light_fuzzel.ini "$HOME"/.config/fuzzel/fuzzel.ini
 
-    # Notification (for debug purposes)
-        notify-send "Switched" "to light mode!"
+    # Notification
+        notify-send -c "system" "  Light mode"
     ;;
 dark)
     # Set mode for GTK3 applications. Install arc-gtk-theme, because there is no Adwaita-dark theme anymore
         gsettings set org.gnome.desktop.interface gtk-theme Arc-Dark
     # Set mode for GTK4 applications
-        niri msg action do-screen-transition && dconf write /org/gnome/desktop/interface/color-scheme '"prefer-dark"'
+        niri msg action do-screen-transition && gsettings set org.gnome.desktop.interface color-scheme prefer-dark
 
     # Switch wallpaper
         ln -sf "$HOME"/Pictures/Wallpapers/niri_dark.jpg "$HOME"/.config/niri/wallpaper
@@ -62,9 +62,9 @@ dark)
     # Set mako
         makoctl mode -s dark
     # Set fuzzel
-        ln -sf $HOME/.config/fuzzel/dark_fuzzel.ini $HOME/.config/fuzzel/fuzzel.ini
+        ln -sf "$HOME"/.config/fuzzel/dark_fuzzel.ini "$HOME"/.config/fuzzel/fuzzel.ini
 
     # Notification (for debug purposes)
-        notify-send "Switched" "to dark mode!"
+        notify-send -c "system" "  Dark mode"
     ;;
 esac

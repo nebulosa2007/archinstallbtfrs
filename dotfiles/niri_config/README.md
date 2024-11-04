@@ -21,7 +21,7 @@ Installation:
    blueman curl firefox fuzzel gnome-weather gsconnect iwd jq mpv mpv-mpris
    openresolv otf-font-awesome pavucontrol pikaur pipewire-media-session pulseaudio
    pulseaudio-alsa pulseaudio-bluetooth python-pydbus telegram-desktop ttf-font-logos
-   wireguard-tools wl-clipboard ydotool youtube-music-bin
+   wireguard-tools wl-clipboard ydotool xwayland-satellite
    ```
 
 Also check instructions for waybar: `head -7 ~/.config/waybar/config`
@@ -43,6 +43,7 @@ ln -s ~/.config/systemd/user/swaybg.service            ~/.config/systemd/user/ni
 ln -s /usr/lib/systemd/user/waybar.service             ~/.config/systemd/user/niri.service.wants/
 ln -s ~/.config/systemd/user/wlsunset.service          ~/.config/systemd/user/niri.service.wants/
 ln -s ~/.config/systemd/user/ydotool.service           ~/.config/systemd/user/niri.service.wants/
+ln -s /usr/lib/systemd/user/xwayland-satellite.service ~/.config/systemd/user/niri.servuce.wants/
 ```
 4. Other settings:
 

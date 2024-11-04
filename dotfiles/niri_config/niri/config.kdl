@@ -1,5 +1,10 @@
 // Check the wiki for a full description of the configuration:
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Overview
+
+environment {
+    QT_QPA_PLATFORMTHEME "gtk3"
+    DISPLAY ":0"
+}
 input {
     keyboard {
         xkb {
@@ -35,7 +40,7 @@ layout {
 screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
 binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
-    Mod+T { spawn "kgx"; }
+    Mod+T { spawn "gnome-terminal"; }
     Mod+D { spawn "fuzzel"; }
     Super+Alt+L { spawn "swaylock"; }
     // XF86TouchpadToggle { spawn ; }
@@ -210,12 +215,16 @@ animations {
    }
 }
 
-workspace "default"
 workspace "work"
 
 window-rule {
     geometry-corner-radius 12
     clip-to-geometry true
+}
+
+window-rule {
+    match is-active=false
+    opacity 0.8
 }
 
 window-rule {
@@ -247,11 +256,6 @@ window-rule {
 }
 
 window-rule {
-    match is-active=false
-    opacity 0.8
-}
-
-window-rule {
     match app-id="virt-manager" title="Virtual Machine Manager"
     default-column-width { proportion 0.33333; }
 }
@@ -259,5 +263,11 @@ window-rule {
 window-rule {
     match app-id="virt-manager" title=r#"on QEMU/KVM$"#
     default-column-width { proportion 0.8; }
+    open-on-workspace "work"
+}
+
+window-rule {
+    match app-id="chromium"
+    default-column-width { proportion 1.0; }
     open-on-workspace "work"
 }

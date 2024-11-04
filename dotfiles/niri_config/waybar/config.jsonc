@@ -15,22 +15,29 @@
     // "width": 1280, // Waybar width
     "spacing": 0, // Gaps between modules (4px)
     // Choose the order of the modules
-    "modules-left":   ["custom/niri_workspaces", "custom/weather"],
+    "modules-left":   ["niri/workspaces", "custom/weather"],
     "modules-center": ["clock"],
-    "modules-right":  ["custom/loadavg", "memory", "temperature", "battery", "bluetooth", "network", "custom/vpn", "custom/logout"],
+    "modules-right":  ["load", "memory", "temperature", "battery", "bluetooth", "network", "custom/vpn", "custom/logout"],
     // Modules configuration
-// Install jq mpv mpv-mpris wl-clipboard fuzzel
-    "custom/niri_workspaces": {
-        "format": "{}",
-        "interval": 2,
-        "return-type": "json",
-        "exec": "$HOME/.config/waybar/modules/workspaces.sh \"$WAYBAR_OUTPUT_NAME\"",
-        "on-click": "fuzzel",
-        "on-click-right": "mpv --profile=notebook \"$(wl-paste | fuzzel --dmenu -l0 -w50 --prompt=\"Stream: $(wl-paste)\")\"",
-        "on-scroll-up": "$HOME/.config/waybar/modules/workspaces.sh up",
-        "on-scroll-down": "$HOME/.config/waybar/modules/workspaces.sh down",
-        "signal": 8
+    "niri/workspaces": {
+        "format": "{icon}",
+        "format-icons": {
+            "active": "<big></big>",
+            "default": "<small></small>"
+        }
     },
+// Install jq mpv mpv-mpris wl-clipboard fuzzel
+//    "custom/niri_workspaces": {
+//        "format": "{}",
+//        "interval": 2,
+//        "return-type": "json",
+//        "exec": "$HOME/.config/waybar/modules/workspaces.sh \"$WAYBAR_OUTPUT_NAME\"",
+//        "on-click": "fuzzel"
+//        "on-click-right": "mpv --profile=notebook \"$(wl-paste | fuzzel --dmenu -l0 -w50 --prompt=\"Stream: $(wl-paste)\")\"",
+//        "on-scroll-up": "$HOME/.config/waybar/modules/workspaces.sh up",
+//        "on-scroll-down": "$HOME/.config/waybar/modules/workspaces.sh down",
+//        "signal": 8
+//    },
 // Install curl jq gnome-weather
     "custom/weather": {
         "format": "{}",
@@ -73,13 +80,17 @@
             "on-scroll-down": "shift_down"
         }
     },
-    "custom/loadavg": {
-        "format": "{}  ",
-        "interval": 10,
-        "return-type": "json",
-        "exec": "$HOME/.config/waybar/modules/loadavg.sh",
-        "on-click": "kgx -e htop"
+    "load": {
+        "format": "{load1} ",
+        "on-click": "gnome-terminal -- htop"
     },
+//    "custom/loadavg": {
+//        "format": "{}  ",
+//        "interval": 10,
+//        "return-type": "json",
+//        "exec": "$HOME/.config/waybar/modules/loadavg.sh",
+//        "on-click": "kgx -e htop"
+//    },
     // "cpu": {
     //     "format": "{usage}% ",
     //     "tooltip": false
@@ -151,7 +162,8 @@
         "format-disconnected": "Disconnected ⚠",
         "format-alt": "{ifname}: {ipaddr}/{cidr}",
         "on-click-right": "$HOME/.config/waybar/modules/wifiselector.sh",
-        "on-click-middle": "kgx -e '$HOME/.config/waybar/modules/vpn.sh wg0 && pkill -SIGRTMIN+4 waybar'"
+        //"on-click-middle": "gnome-terminal -- $SHELL -c \"$HOME/.config/waybar/modules/vpn.sh wg0 && pkill -SIGRTMIN+4 waybar; exec $SHELL\""
+        "on-click-middle": "pkexec $HOME/.config/waybar/modules/vpn.sh wg0; pkill -SIGRTMIN+4 waybar"
     },
 // Install wireguard-tools openresolv
 // Put your client wireguard config to '/etc/wireguard/wg0.conf'
@@ -160,7 +172,8 @@
         "exec": "echo '{\"class\": \"connected\", \"tooltip\": \"VPN is ON\"}'",
         "exec-if": "test -d /proc/sys/net/ipv4/conf/wg0",
         "return-type": "json",
-        "on-click": "kgx -e '$HOME/.config/waybar/modules/vpn.sh wg0 && pkill -SIGRTMIN+4 waybar'",
+        //"on-click": "gnome-terminal -- $SHELL -c \"$HOME/.config/waybar/modules/vpn.sh wg0 && pkill -SIGRTMIN+4 waybar; exec $SHELL\"",
+        "on-click": "pkexec $HOME/.config/waybar/modules/vpn.sh wg0; pkill -SIGRTMIN+4 waybar",
         "signal": 4
     },
     "custom/logout": {
@@ -176,23 +189,29 @@
     // "width": 1280, // Waybar width
     "spacing": 0, // Gaps between modules (4px)
     // Choose the order of the modules
-    "modules-left": ["custom/media"],
+    "modules-left": ["mpris"],
     "modules-center": ["wlr/taskbar"],
-    "modules-right": ["custom/updates", "custom/gsconnect", "custom/unmount", "tray", "custom/clipboard","pulseaudio"],
-    "custom/media": {
-        "format": "{icon} {}",
-        "return-type": "json",
-        "max-length": 85,
-        // "format-icons": {
-        // "firefox": "",
-        // "default": "" // ""
-        // },
-        "escape": true,
-        "exec": "$HOME/.config/waybar/modules/mediaplayer.py 2> /dev/null",
-        "on-click": "playerctl play-pause",
-        "on-click-right": "playerctl next",
-        "on-click-middle": "playerctl previous"
-        // "exec": "$HOME/.config/waybar/modules/mediaplayer.py --player spotify 2> /dev/null" // Filter player based on name
+    "modules-right": ["niri/language","custom/updates", "custom/gsconnect", "custom/unmount", "tray", "custom/clipboard","pulseaudio"],
+    "mpris": {
+        //"interval": 5,
+        "dynamic-order": ["artist", "title"],
+        "format": "{player_icon} {dynamic}",
+        "tooltip-format": "{album}",
+        "format-paused": "{status_icon} <i>{dynamic}</i>",
+        "player-icons": {
+            "default": " "
+        },
+        "status-icons": {
+            "paused": " "
+        },
+    // "ignored-players": ["firefox"]
+    },
+    "niri/language": {
+        "format": "{}",
+        "format-en": "En",
+        "format-ru": "Ru",
+        "min-length": 10,
+        "align": 0.1
     },
     "wlr/taskbar": {
         "format": "{icon}",
@@ -207,7 +226,7 @@
         "interval": "once",
         "return-type": "json",
         "exec": "$HOME/.config/waybar/modules/updates.sh",
-        "on-click": "kgx -e '$HOME/.config/waybar/modules/updates.sh getnews && pkill -SIGRTMIN+9 waybar'",
+        "on-click": "gnome-terminal -- $SHELL -c \"$HOME/.config/waybar/modules/updates.sh getnews && pkill -SIGRTMIN+9 waybar; exec $SHELL\"",
         "signal": 9
     },
 // Install python-pydbus ydotool gsconnect(AUR)
