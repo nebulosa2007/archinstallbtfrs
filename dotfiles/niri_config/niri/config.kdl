@@ -5,11 +5,18 @@ environment {
     QT_QPA_PLATFORMTHEME "gtk3"
     DISPLAY ":0"
 }
+cursor {
+    hide-when-typing
+}
+
+switch-events {
+    lid-open { spawn "~/.config/waybar/modules/switch_events.sh" "btreload"; }
+}
 input {
     keyboard {
         xkb {
             layout "us,ru"
-            options "grp:caps_toggle,grp_led:caps"
+            options "grp:win_space_toggle,grp:alt_shift_toggle,grp_led:scroll"
         }
         track-layout "window"
     }
@@ -36,11 +43,12 @@ layout {
         active-gradient from="#ffffff" to="#1793d1" angle=0
         inactive-gradient from="#303030" to="#333333" angle=0
     }
+    always-center-single-column
 }
 screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
 binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
-    Mod+T { spawn "gnome-terminal"; }
+    Mod+T { spawn "kgx"; }
     Mod+D { spawn "fuzzel"; }
     Super+Alt+L { spawn "swaylock"; }
     // XF86TouchpadToggle { spawn ; }

@@ -97,6 +97,7 @@ button:hover {
 #custom-media,
 #mpris,
 #load,
+#power-profile-daemon,
 #tray,
 #mode,
 #idle_inhibitor,
@@ -108,6 +109,17 @@ button:hover {
 
 #window{
     margin: 0px 4px;
+}
+
+#custom-vpn {
+    padding: 0px 5px;
+    color: #00ff00;
+}
+
+#custom-streamplay {
+    font-size: 20px;
+    padding: 0px 5px;
+    color: #ffffff;
 }
 
 #custom-gsconnect {

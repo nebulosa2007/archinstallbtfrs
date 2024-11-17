@@ -15,9 +15,9 @@
     // "width": 1280, // Waybar width
     "spacing": 0, // Gaps between modules (4px)
     // Choose the order of the modules
-    "modules-left":   ["niri/workspaces", "custom/weather"],
+    "modules-left":   ["niri/workspaces", "custom/streamplay", "custom/weather"],
     "modules-center": ["clock"],
-    "modules-right":  ["load", "memory", "temperature", "battery", "bluetooth", "network", "custom/vpn", "custom/logout"],
+    "modules-right":  ["group/hardware", "custom/vpn"],
     // Modules configuration
     "niri/workspaces": {
         "format": "{icon}",
@@ -26,18 +26,6 @@
             "default": "<small></small>"
         }
     },
-// Install jq mpv mpv-mpris wl-clipboard fuzzel
-//    "custom/niri_workspaces": {
-//        "format": "{}",
-//        "interval": 2,
-//        "return-type": "json",
-//        "exec": "$HOME/.config/waybar/modules/workspaces.sh \"$WAYBAR_OUTPUT_NAME\"",
-//        "on-click": "fuzzel"
-//        "on-click-right": "mpv --profile=notebook \"$(wl-paste | fuzzel --dmenu -l0 -w50 --prompt=\"Stream: $(wl-paste)\")\"",
-//        "on-scroll-up": "$HOME/.config/waybar/modules/workspaces.sh up",
-//        "on-scroll-down": "$HOME/.config/waybar/modules/workspaces.sh down",
-//        "signal": 8
-//    },
 // Install curl jq gnome-weather
     "custom/weather": {
         "format": "{}",
@@ -80,21 +68,39 @@
             "on-scroll-down": "shift_down"
         }
     },
+    "group/hardware": {
+        "orientation": "inherit",
+        "drawer": {
+            "transition-duration": 500,
+            "transition-left-to-right": false
+        },
+        "modules": [
+            "load",
+            "power-profiles-daemon",
+            "memory",
+            "temperature",
+            "battery",
+            "bluetooth",
+            "network",
+            "custom/logout"
+        ]
+    },
     "load": {
         "format": "{load1} ",
-        "on-click": "gnome-terminal -- htop"
+        "on-click": "kgx -e htop"
     },
-//    "custom/loadavg": {
-//        "format": "{}  ",
-//        "interval": 10,
-//        "return-type": "json",
-//        "exec": "$HOME/.config/waybar/modules/loadavg.sh",
-//        "on-click": "kgx -e htop"
-//    },
-    // "cpu": {
-    //     "format": "{usage}% ",
-    //     "tooltip": false
-    // },
+// Install power-profiles-daemon
+    "power-profiles-daemon": {
+        "format": " {icon} ",
+        "tooltip-format": "Power profile: {profile}\nDriver: {driver}",
+        "tooltip": true,
+        "format-icons": {
+            "default": "",
+            "performance": "",
+            "balanced": "",
+            "power-saver": ""
+        }
+    },
     "memory": {
         "format": "",
         "format-alt": "{used} Gb ",
@@ -151,7 +157,7 @@
         "tooltip-format-enumerate-connected-battery": "{device_alias}\t{device_address}\t{device_battery_percentage}%",
         "on-click-right": "blueman-manager"
     },
-// Install iwd fuzzel
+// Install iwd fuzzel polkit
     "network": {
         // "interface": "wlp2*", // (Optional) To force the use of this interface
         "format-wifi": "",
@@ -162,17 +168,15 @@
         "format-disconnected": "Disconnected ⚠",
         "format-alt": "{ifname}: {ipaddr}/{cidr}",
         "on-click-right": "$HOME/.config/waybar/modules/wifiselector.sh",
-        //"on-click-middle": "gnome-terminal -- $SHELL -c \"$HOME/.config/waybar/modules/vpn.sh wg0 && pkill -SIGRTMIN+4 waybar; exec $SHELL\""
         "on-click-middle": "pkexec $HOME/.config/waybar/modules/vpn.sh wg0; pkill -SIGRTMIN+4 waybar"
     },
 // Install wireguard-tools openresolv
 // Put your client wireguard config to '/etc/wireguard/wg0.conf'
     "custom/vpn": {
-        "format": "",
+        "format": " ",
         "exec": "echo '{\"class\": \"connected\", \"tooltip\": \"VPN is ON\"}'",
         "exec-if": "test -d /proc/sys/net/ipv4/conf/wg0",
         "return-type": "json",
-        //"on-click": "gnome-terminal -- $SHELL -c \"$HOME/.config/waybar/modules/vpn.sh wg0 && pkill -SIGRTMIN+4 waybar; exec $SHELL\"",
         "on-click": "pkexec $HOME/.config/waybar/modules/vpn.sh wg0; pkill -SIGRTMIN+4 waybar",
         "signal": 4
     },
@@ -190,11 +194,12 @@
     "spacing": 0, // Gaps between modules (4px)
     // Choose the order of the modules
     "modules-left": ["mpris"],
-    "modules-center": ["wlr/taskbar"],
-    "modules-right": ["niri/language","custom/updates", "custom/gsconnect", "custom/unmount", "tray", "custom/clipboard","pulseaudio"],
+    "modules-center": ["custom/streamplay", "wlr/taskbar"],
+    "modules-right": ["niri/language", "custom/updates", "custom/gsconnect", "custom/unmount", "tray", "custom/clipboard","pulseaudio"],
     "mpris": {
         //"interval": 5,
         "dynamic-order": ["artist", "title"],
+        "dynamic-len": 100,
         "format": "{player_icon} {dynamic}",
         "tooltip-format": "{album}",
         "format-paused": "{status_icon} <i>{dynamic}</i>",
@@ -208,17 +213,27 @@
     },
     "niri/language": {
         "format": "{}",
+        "on-click": "niri msg action switch-layout next",
         "format-en": "En",
         "format-ru": "Ru",
         "min-length": 10,
         "align": 0.1
+    },
+// Install mpv mpv-mpris wl-clipboard fuzzel
+    "custom/streamplay": {
+        "format": "",
+        "tooltip-format": "Open live stream from clipboard",
+        "on-click": "mpv --profile=notebook \"$(wl-paste | fuzzel --dmenu -l0 -w50 --prompt=\"Stream: $(wl-paste)\")\"",
+        "on-click-middle": "fuzzel",
+        "on-click-right": "niri msg action maximize-column"
     },
     "wlr/taskbar": {
         "format": "{icon}",
         "icon-size": 24,
         //"tooltip-format": "{title} | {app_id}",
         "on-click": "activate",
-        "on-click-middle": "close"
+        "on-click-middle": "fuzzel",
+        "on-click-right": "niri msg action maximize-column"
     },
 // Install pikaur(AUR)
     "custom/updates": {
@@ -226,7 +241,7 @@
         "interval": "once",
         "return-type": "json",
         "exec": "$HOME/.config/waybar/modules/updates.sh",
-        "on-click": "gnome-terminal -- $SHELL -c \"$HOME/.config/waybar/modules/updates.sh getnews && pkill -SIGRTMIN+9 waybar; exec $SHELL\"",
+        "on-click": "kgx -e '$HOME/.config/waybar/modules/updates.sh getnews && pkill -SIGRTMIN+9 waybar'",
         "signal": 9
     },
 // Install python-pydbus ydotool gsconnect(AUR)
