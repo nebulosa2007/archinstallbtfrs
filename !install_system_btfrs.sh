@@ -216,10 +216,11 @@ systemctl enable systemd-networkd
 sed -i "s/quiet/quiet zswap.enabled=0 /;s/  / /" /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg
 pacman -S zram-generator
-printf "[zram0]\nzram-size = ram / 2\ncompression-algorithm = zstd\nswap-priority = 100\nfs-type = swap\n" > /etc/systemd/zram-generator.conf
+printf "[zram0]\nzram-size = min(ram / 2, 4096)\ncompression-algorithm = zstd\n" > /etc/systemd/zram-generator.conf
 
 #Other
 ## https://wiki.archlinux.org/title/Reflector#systemd_timer
+# pacman -S reflector
 # systemctl enable reflector.timer
 ## https://wiki.archlinux.org/title/Systemd-homed
 systemctl enable systemd-homed
