@@ -39,7 +39,7 @@ sudo pacman -S plasma-desktop qt5-xmlpatterns plasma-browser-integration plasma-
 # nmcli connection import type wireguard file Downloads/MyVPN.conf
 # OR:
 # Without networkmanager and bluez
-pikaur -S powerdevil-light
+paru -S powerdevil-light
 
 #Bluetooth support
 sudo pacman -S pulseaudio-bluetooth bluedevil
