@@ -6,8 +6,8 @@
 U=nebulosa
 
 #Console useful programs
-pikaur -Syu --needed htop mc ncdu ranger tmux micro lsd
-#Optional: pikaur -S --needed speedread trash bat bpytop
+paru -Syu --needed htop mc ncdu ranger tmux micro lsd
+#Optional: paru -S --needed speedread trash bat bpytop
 
 
 #Cleaning/rebase apps in home folder:
@@ -42,7 +42,7 @@ sudo sed -i s'|^Exec=|Exec=env DRI_PRIME=1 |g' /usr/share/applications/youtube-m
 
 
 #Optional old nvidia drivers
-pikaur -S linux-headers nvidia-340xx-dkms
+paru -S linux-headers nvidia-340xx-dkms
 sudo cp /usr/share/nvidia-340xx/20-nvidia.conf /etc/X11/xorg.conf.d/20-nvidia.conf
 sudo sed -i 's/Driver "nvidia"/Driver "nvidia"\n  Option "NoLogo" "1"/' /etc/X11/xorg.conf.d/20-nvidia.conf
 sudo sed -i 's/ kms / /' /etc/mkinitcpio.conf
@@ -57,12 +57,12 @@ sudo sed -i "s/GRUB_GFXPAYLOAD_LINUX=keep/GRUB_GFXPAYLOAD_LINUX=text/" /etc/defa
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 
 #Installing Kodi with autologin lightdm
-pikaur -S kodi lightdm accountsservice
+paru -S kodi lightdm accountsservice
 sudo sed -i "s/^\[Seat:\*\]$/\[Seat:\*\]\npam-service=lightdm-autologin\nautologin-user=$U\nautologin-user-timeout=0\nuser-session=kodi/" /etc/lightdm/lightdm.conf
 
 #OR
 #Installing Kodi with service
-pikaur -S kodi-standalone-service xorg-server xorg-init
+paru -S kodi-standalone-service xorg-server xorg-init
 sudo mkdir /etc/systemd/system/kodi-x11.service.d
 printf "[Service]\nUser=$U\nGroup=$U\n" | sudo tee -a /etc/systemd/system/kodi-x11.service.d/username.conf
 sudo systemctl daemon-reload
@@ -74,7 +74,7 @@ sudo systemctl enable kodi-x11.service
 # sudo systemctl --global disable pipewire.socket
 
 #For CEC management
-pikaur -S libcec
+paru -S libcec
 sudo usermod -aG uucp,lock $U
 echo "mesa_glthread=true" | sudo tee -a /etc/environment
 
@@ -85,7 +85,7 @@ echo "mesa_glthread=true" | sudo tee -a /etc/environment
 
 
 #Install docker
-pikaur -S docker
+paru -S docker
 #for btrfs snapshots:
 #https://forum.garudalinux.org/t/btrfs-docker-and-subvolumes/4601/14
 sudo mkdir /etc/docker/ && printf '{\n\t"storage-driver": "overlay2"\t\n}\n' | sudo tee /etc/docker/daemon.json
