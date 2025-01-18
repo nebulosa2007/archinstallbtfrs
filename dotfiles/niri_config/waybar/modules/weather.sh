@@ -51,7 +51,7 @@ case ${weather[2]} in
 "heavyrain" | "rainshowers" | "heavyrainshowers" )
     icon=" "
     ;;
-"snow" | "sleet" | "lightsnow" | "lightsleet" | "light snow" | "snow shower" | "patchy snow possible" | "patchy sleet possible" | "patchy freezing drizzle possible" | "freezing drizzle" | "heavy freezing drizzle" | "light freezing rain" | "moderate or heavy freezing rain" | "light sleet" | "ice pellets" | "light sleet showers" | "moderate or heavy sleet showers")
+"snow" | "sleet" | "lightsnow" | "lightsleet" | "heavysleet" |  "light snow" | "snow shower" | "patchy snow possible" | "patchy sleet possible" | "patchy freezing drizzle possible" | "freezing drizzle" | "heavy freezing drizzle" | "light freezing rain" | "moderate or heavy freezing rain" | "light sleet" | "ice pellets" | "light sleet showers" | "moderate or heavy sleet showers")
     icon=" "
     ;;
 "blowing snow" | "moderate or heavy sleet" | "patchy light snow" | "light snow showers")

@@ -1,21 +1,21 @@
  // TIP: to get all install instructions for this config use
- // grep -E "^// " $HOME/.config/waybar/config
+ // grep -E "^// " $HOME/.config/waybar/config.jsonc
  //
  // To install all packages by once:
  // sudo pacman -Syu --needed $(grep -Po '(?<=^\/\/ Install ).*' config | grep -v AUR)
  // or with AUR packages
- // pikaur -Syu --needed $(grep -Po '(?<=^\/\/ Install ).*' config | sed 's|(AUR)||g')
+ // paru -Syu --needed $(grep -Po '(?<=^\/\/ Install ).*' config | sed 's|(AUR)||g')
 
 [
  {
 // Install otf-font-awesome ttf-font-logos(AUR)
-    "layer": "top", // Waybar at top layer
+    //"layer": "top", // Waybar at top layer
     "position": "top", // Waybar position (top|bottom|left|right)
     "height": 35, // Waybar height (to be removed for auto height)
     // "width": 1280, // Waybar width
     "spacing": 0, // Gaps between modules (4px)
     // Choose the order of the modules
-    "modules-left":   ["niri/workspaces", "custom/streamplay", "custom/weather"],
+    "modules-left":   ["niri/workspaces", "custom/weather"],
     "modules-center": ["clock"],
     "modules-right":  ["group/hardware", "custom/vpn"],
     // Modules configuration
@@ -187,7 +187,7 @@
     }
 },
 {
-    "layer": "top", // Waybar at top layer
+    //"layer": "top", // Waybar at top layer
     "position": "bottom", // Waybar position (top|bottom|left|right)
     "height": 35, // Waybar height (to be removed for auto height)
     // "width": 1280, // Waybar width
@@ -235,7 +235,7 @@
         "on-click-middle": "fuzzel",
         "on-click-right": "niri msg action maximize-column"
     },
-// Install pikaur(AUR)
+// Install paru(AUR)
     "custom/updates": {
         "format": "{}  ",
         "interval": "once",

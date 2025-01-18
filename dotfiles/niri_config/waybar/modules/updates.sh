@@ -16,8 +16,28 @@ if [ -z "$1" ]; then
     done
     [[ ${#upds[*]} -gt 0 ]] && echo "{\"text\": \"$att${#upds[*]}\", \"class\": \"updates\", \"tooltip\": \"${upds[*]}\"}"
 elif [ "$1" == "getnews" ]; then
-    echo -ne '\033[0;34m:: \033[0m\033[1mRequired by: '; echo -e '\033[0m'; max=$(pacman -Qqu | wc -L); for pkg in $(pacman -Qqu); do printf "%*s:%s\n" "$max" "$pkg" "$(pacman -Qi "$pkg" | grep Req | sed -e 's/Required By     : //g')" | column -c85 -s: -t -W2; done;
-    echo -ne '\n\033[0;34m:: \033[0m\033[1mMirror: '"$(grep -m1 -Po '(?<=Server = https:\/\/)[^\/]+' /etc/pacman.d/mirrorlist)"'\033[0m\n\n'
-    pikaur -Syu --noedit
+    # Required by block
+    max=$(pacman -Qqu | wc -L)
+    if [ "$max" -gt 0 ]
+    then
+        echo -e '\033[0;34m:: \033[0m\033[1mRequired by: \033[0m'
+        for pkg in $(pacman -Qqu)
+        do
+            printf "%*s:%s\n" "$max" "$pkg" "$(pacman -Qi "$pkg" | grep Req | sed -e 's/Required By     : //g')" | column -c80 -s: -t -W2
+        done
+    fi
+    # Mirror block
+    mirror=$(grep -m1 '^[^#]*Server.*=' /etc/pacman.d/mirrorlist | cut  -d'/' -f3)
+    echo -ne '\033[0;34m:: \033[0m\033[1mMirror:'; echo -n " $mirror"; echo -e '\033[0m';
+    # Arch news block
+    NEWS=$HOME/.cache/archlinux.news; [ -r "$NEWS" ] || touch "$NEWS"
+    rss_url="https://archlinux.org/feeds/news/"
+    last_modified=$(curl -sIm3 "$rss_url" | grep -oP "^last-modified: \K[0-9A-Za-z,: ]+")
+    if [ -n "$last_modified" ] && ! grep -q "$last_modified" "$NEWS"; then
+        latestnews=$(curl -sm3 "$rss_url" | grep -Eo "<lastBuildDate>.*</title>" | sed -e 's/<[^>]*>/ /g;s/+0000  /GMT /g')
+        [ -n "$latestnews" ] && ( echo "$latestnews" > "$NEWS"; echo -e '\033[0;34m:: \033[0m\033[1mLatest news...\033[0m'; echo "   $latestnews" )
+    fi
+    # Working with updates
+    paru -Syu
     read -n 1 -s -r -p "Press any key to exit..."
 fi
