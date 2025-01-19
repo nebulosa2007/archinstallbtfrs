@@ -152,7 +152,6 @@ printf "127.0.0.1 localhost\n::1       localhost\n127.0.0.1 $M.localhost $M\n" >
 ## https://wiki.archlinux.org/title/Mkinitcpio/Minimal_initramfs
 #On a BTRFS ONLY disk (without separate partition fat for EFI) remove fsck HOOK form /etc/mkinitcpio.conf
 # sed -i "s/PRESETS=('default' 'fallback')/PRESETS=('default')/" /etc/mkinitcpio.d/linux.preset
-# sed -i "s|ALL_microcode=(/boot/*-ucode.img)|#ALL_microcode=(/boot/*-ucode.img)|" /etc/mkinitcpio.d/linux.preset
 # mkinitcpio -P
 # rm /boot/initramfs-linux-fallback.img
 
