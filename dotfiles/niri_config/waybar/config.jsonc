@@ -199,7 +199,7 @@
     "mpris": {
         //"interval": 5,
         "dynamic-order": ["artist", "title"],
-        "dynamic-len": 100,
+        "dynamic-len": 97,
         "format": "{player_icon} {dynamic}",
         "tooltip-format": "{album}",
         "format-paused": "{status_icon} <i>{dynamic}</i>",
@@ -223,7 +223,7 @@
     "custom/streamplay": {
         "format": "",
         "tooltip-format": "Open live stream from clipboard",
-        "on-click": "mpv --profile=notebook \"$(wl-paste | fuzzel --dmenu -l0 -w50 --prompt=\"Stream: $(wl-paste)\")\"",
+        "on-click": "mpv --terminal=no --profile=notebook \"$(wl-paste | fuzzel --dmenu -l0 -w50 --prompt=\"Stream: $(wl-paste)\")\"",
         "on-click-middle": "fuzzel",
         "on-click-right": "niri msg action maximize-column"
     },
