@@ -30,6 +30,7 @@
 
 case $(darkman get) in
 light)
+    # Make sure that you set env parmeter QT_QPA_PLATFORMTHEME=gtk3 for QT applications
     # Set mode for GTK3 applications
         gsettings set org.gnome.desktop.interface gtk-theme Adwaita
     # Set mode for GTK4 applications
