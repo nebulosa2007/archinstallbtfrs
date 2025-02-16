@@ -168,11 +168,6 @@ grub-install --recheck /dev/sda #Or /dev/vda for VPS
 ## https://wiki.archlinux.org/title/GRUB#Configuration
 # sed -i 's/#GRUB_DISABLE_OS_PROBER=false/GRUB_DISABLE_OS_PROBER=false/' /etc/default/grub
 # sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=0/' /etc/default/grub
-## https://ventureo.codeberg.page/source/kernel-parameters.html
-# sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet"/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash rootfstype=btrfs raid=noautodetect mitigations=off preempt=none audit=0 page_alloc.shuffle=1 split_lock_detect=off pci=pcie_bus_perf"/' /etc/default/grub
-# sed -i "s/rootfstype=btrfs /rootfstype=btrfs lpj=$(dmesg | grep -Po '(?<=BogoMIPS \(lpj=)(\d+)') /" /etc/default/grub
-# echo "GRUB_EARLY_INITRD_LINUX_STOCK=''" >> /etc/default/grub
-grub-mkconfig -o /boot/grub/grub.cfg
 
 #Double check files!
 cat /etc/fstab /etc/hostname /etc/hosts
@@ -199,8 +194,6 @@ printf "[Service]\nExecStart=\nExecStart=/usr/lib/systemd/systemd-networkd-wait-
 systemctl enable systemd-networkd
 
 #Zram https://wiki.archlinux.org/title/Zram#Using_zram-generator
-sed -i "s/quiet/quiet zswap.enabled=0 /;s/  / /" /etc/default/grub
-grub-mkconfig -o /boot/grub/grub.cfg
 pacman -S zram-generator
 printf "[zram0]\nzram-size = min(ram / 2, 4096)\ncompression-algorithm = zstd\n" > /etc/systemd/zram-generator.conf
 
@@ -288,4 +281,4 @@ cd paru && makepkg -fsri && cd .. && rm -rf paru
 # echo  "/.swap/swapfile none swap defaults 0 0" | sudo tee -a /etc/fstab
 
 #Todo https://wiki.archlinux.org/title/Btrfs#Booting_into_snapshots grub-btrfs
-#Optional: https://ventureo.codeberg.page/source/extra-optimizations.html#alhp-repository
+#Optional: https://ventureo.codeberg.page/source/
