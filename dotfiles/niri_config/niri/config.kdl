@@ -25,11 +25,8 @@ input {
             // For more information, see xkeyboard-config(7).
 
             // For example:
-            // layout "us,ru"
-            // options "grp:win_space_toggle,compose:ralt,ctrl:nocaps"
             layout "us,ru"
-            options "grp:win_space_toggle,grp:alt_shift_toggle,grp_led:scroll"
-
+            options "grp:alt_shift_toggle,grp_led:scroll"
         }
         track-layout "window"
     }
@@ -41,6 +38,7 @@ input {
         tap
         dwt
         dwtp
+        // drag-lock
         natural-scroll
         // accel-speed 0.2
         // accel-profile "flat"
@@ -211,6 +209,43 @@ layout {
         // inactive-gradient from="#505050" to="#808080" angle=45 relative-to="workspace-view"
     }
 
+    // You can enable drop shadows for windows.
+    shadow {
+        // Uncomment the next line to enable shadows.
+        // on
+
+        // By default, the shadow draws only around its window, and not behind it.
+        // Uncomment this setting to make the shadow draw behind its window.
+        //
+        // Note that niri has no way of knowing about the CSD window corner
+        // radius. It has to assume that windows have square corners, leading to
+        // shadow artifacts inside the CSD rounded corners. This setting fixes
+        // those artifacts.
+        //
+        // However, instead you may want to set prefer-no-csd and/or
+        // geometry-corner-radius. Then, niri will know the corner radius and
+        // draw the shadow correctly, without having to draw it behind the
+        // window. These will also remove client-side shadows if the window
+        // draws any.
+        //
+        // draw-behind-window true
+
+        // You can change how shadows look. The values below are in logical
+        // pixels and match the CSS box-shadow properties.
+
+        // Softness controls the shadow blur radius.
+        softness 30
+
+        // Spread expands the shadow.
+        spread 5
+
+        // Offset moves the shadow relative to the window.
+        offset x=0 y=5
+
+        // You can also change the shadow color and opacity.
+        color "#0007"
+    }
+
     // Struts shrink the area occupied by windows, similarly to layer-shell panels.
     // You can think of them as a kind of outer gaps. They are set in logical pixels.
     // Left and right struts will cause the next window to the side to always be visible.
@@ -366,6 +401,8 @@ window-rule {
     // block-out-from "screencast"
 }
 
+// Example: enable rounded corners for all windows.
+// (This example rule is commented out with a "/-" in front.)
 window-rule {
     geometry-corner-radius 12
     clip-to-geometry true
@@ -400,22 +437,28 @@ binds {
     // Note: the entire command goes as a single argument in the end.
     // Mod+T { spawn "bash" "-c" "notify-send hello && exec alacritty"; }
 
-    // XF86TouchpadToggle { spawn ; }
-            XF86AudioMute { spawn "bash" "-c" "pactl set-sink-mute @DEFAULT_SINK@ toggle && notify-send -c \"system\" \" $(pactl get-sink-mute @DEFAULT_SINK@)\""; }
-     XF86AudioRaiseVolume { spawn "bash" "-c" "pactl set-sink-volume @DEFAULT_SINK@ +5%  && notify-send -c \"system\" \" $(pactl get-sink-volume @DEFAULT_SINK@ | head -1 | tr -s ' ' | cut -d ' ' -f1,5)\""; }
-     XF86AudioLowerVolume { spawn "bash" "-c" "pactl set-sink-volume @DEFAULT_SINK@ -5%  && notify-send -c \"system\" \" $(pactl get-sink-volume @DEFAULT_SINK@ | head -1 | tr -s ' ' | cut -d ' ' -f1,5)\""; }
-    XF86MonBrightnessDown { spawn "bash" "-c" "brightnessctl -c backlight set 1- && notify-send -c \"system\" \" Brightness: $(brightnessctl -m | cut -d',' -f4)\""; }
-      XF86MonBrightnessUp { spawn "bash" "-c" "brightnessctl -c backlight set +1 && notify-send -c \"system\" \" Brightness: $(brightnessctl -m | cut -d',' -f4)\""; }
-    //        XF86Display { spawn ; }
-    //        XF86Suspend { spawn ; }
+    // Example volume keys mappings for PipeWire & WirePlumber.
+    // The allow-when-locked=true property makes them work even when the session is locked.
+    XF86AudioRaiseVolume allow-when-locked=true { spawn "bash" "-c" "pactl set-sink-volume @DEFAULT_SINK@ +5%  && notify-send -c \"system\" \" $(pactl get-sink-volume @DEFAULT_SINK@ | head -1 | tr -s ' ' | cut -d ' ' -f1,5)\""; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn "bash" "-c" "pactl set-sink-volume @DEFAULT_SINK@ -5%  && notify-send -c \"system\" \" $(pactl get-sink-volume @DEFAULT_SINK@ | head -1 | tr -s ' ' | cut -d ' ' -f1,5)\""; }
+    XF86AudioMute        allow-when-locked=true { spawn "bash" "-c" "pactl set-sink-mute @DEFAULT_SINK@ toggle && notify-send -c \"system\" \" $(pactl get-sink-mute @DEFAULT_SINK@)\""; }
+    XF86AudioMicMute     allow-when-locked=true { spawn "bash" "-c" "pactl set-sink-mute @DEFAULT_AUDIO_SOURCE@" "toggle"; }
+
+    XF86MonBrightnessDown allow-when-locked=true { spawn "bash" "-c" "brightnessctl -c backlight set 1- && notify-send -c \"system\" \" Brightness: $(brightnessctl -m | cut -d',' -f4)\""; }
+    XF86MonBrightnessUp   allow-when-locked=true { spawn "bash" "-c" "brightnessctl -c backlight set +1 && notify-send -c \"system\" \" Brightness: $(brightnessctl -m | cut -d',' -f4)\""; }
+    // XF86Display        allow-when-locked=true { spawn ; }
+    // XF86Suspend        allow-when-locked=true { spawn ; }
+    // XF86TouchpadToggle allow-when-locked=true { spawn ; }
+
     // Additional for VAIO laptops
     // Eject CD-ROM key
-                XF86Eject { spawn "~/.config/waybar/modules/unmount.sh" "unmount"; }
+    XF86Eject { spawn "~/.config/waybar/modules/unmount.sh" "unmount"; }
     // ASSIST key
-                     Help { spawn "playerctl" "play-pause"; }
+    Help { spawn "playerctl" "play-pause"; }
     // WEB key
-             XF86HomePage { spawn "playerctl" "next"; }
+    XF86HomePage { spawn "playerctl" "next"; }
     // VAIO key has no press code
+
     Mod+Q { close-window; }
 
     Mod+Left  { focus-column-left; }
@@ -573,6 +616,11 @@ binds {
     Mod+Ctrl+R { reset-window-height; }
     Mod+F { maximize-column; }
     Mod+Shift+F { fullscreen-window; }
+
+    // Expand the focused column to space not taken up by other fully visible columns.
+    // Makes the column "fill the rest of the space".
+    Mod+Ctrl+F { expand-column-to-available-width; }
+
     Mod+C { center-column; }
 
     // Finer width adjustments.
@@ -594,17 +642,32 @@ binds {
     Mod+V       { toggle-window-floating; }
     Mod+Shift+V { switch-focus-between-floating-and-tiling; }
 
+    // Toggle tabbed column display mode.
+    // Windows in this column will appear as vertical tabs,
+    // rather than stacked on top of each other.
+    Mod+W { toggle-column-tabbed-display; }
+
     // Actions to switch layouts.
     // Note: if you uncomment these, make sure you do NOT have
     // a matching layout switch hotkey configured in xkb options above.
     // Having both at once on the same hotkey will break the switching,
     // since it will switch twice upon pressing the hotkey (once by xkb, once by niri).
-    // Mod+Space       { switch-layout "next"; }
-    // Mod+Shift+Space { switch-layout "prev"; }
+    Mod+Space       { switch-layout "next"; }
+    Mod+Shift+Space { switch-layout "prev"; }
 
     Print { screenshot; }
     Ctrl+Print { screenshot-screen; }
     Alt+Print { screenshot-window; }
+
+    // Applications such as remote-desktop clients and software KVM switches may
+    // request that niri stops processing the keyboard shortcuts defined here
+    // so they may, for example, forward the key presses as-is to a remote machine.
+    // It's a good idea to bind an escape hatch to toggle the inhibitor,
+    // so a buggy application can't hold your session hostage.
+    //
+    // The allow-inhibiting=false property can be applied to other binds as well,
+    // which ensures niri always processes them, even when an inhibitor is active.
+    Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
 
     // The quit action will show a confirmation dialog to avoid accidental exits.
     Mod+Shift+E { quit; }
@@ -613,9 +676,6 @@ binds {
     // Powers off the monitors. To turn them back on, do any input like
     // moving the mouse or pressing any other key.
     Mod+Shift+P { power-off-monitors; }
-
-    Mod+Ctrl+MouseLeft { close-window; }
-    Mod+MouseMiddle    { maximize-column; }
 }
 
 hotkey-overlay {

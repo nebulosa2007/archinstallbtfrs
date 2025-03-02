@@ -43,7 +43,7 @@ ln -s ~/.config/systemd/user/swaybg.service            ~/.config/systemd/user/ni
 ln -s /usr/lib/systemd/user/waybar.service             ~/.config/systemd/user/niri.service.wants/
 ln -s ~/.config/systemd/user/wlsunset.service          ~/.config/systemd/user/niri.service.wants/
 ln -s ~/.config/systemd/user/ydotool.service           ~/.config/systemd/user/niri.service.wants/
-ln -s /usr/lib/systemd/user/xwayland-satellite.service ~/.config/systemd/user/niri.servuce.wants/
+ln -s /usr/lib/systemd/user/xwayland-satellite.service ~/.config/systemd/user/niri.service.wants/
 ```
 4. Other settings:
 
@@ -62,4 +62,4 @@ https://github.com/YaLTeR/niri/wiki/Example-systemd-Setup
 https://github.com/YaLTeR/niri/wiki/Important-Software
 
 Debug or view log:
-`sudo systemctl status waybar`
+`systemctl --user status waybar`

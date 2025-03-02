@@ -35,7 +35,7 @@ elif [ "$1" == "getnews" ]; then
     touch "$NEWS"
     rss_url="https://archlinux.org/feeds/news/"
     last_modified=$(curl -sIm3 "$rss_url" | grep -oP "^last-modified: \K[0-9A-Za-z,: ]+")
-    if [[ -n "$last_modified" ]] && ! grep -q "$last_modified" "$NEWS"; then
+    if [[ -n "${last_modified:-}" ]] && ! grep -q "$last_modified" "$NEWS"; then
         latestnews=$(curl -sm3 "$rss_url" | grep -Eo "<lastBuildDate>.*</title>" | sed -e 's/<[^>]*>/ /g;s/+0000  /GMT /g')
         if [[ -n "$latestnews" ]]; then
             echo "$latestnews" >"$NEWS"
@@ -45,5 +45,7 @@ elif [ "$1" == "getnews" ]; then
     fi
     # Working with updates
     paru -Syu
-    [[ "$TERM_PROGRAM" != "kgx" ]] && read -n 1 -s -r -p "Press any key to exit..."
+    if [[ "$TERM_PROGRAM" != "kgx" ]]; then
+        read -n 1 -s -r -p "Press any key to exit..."
+    fi
 fi
