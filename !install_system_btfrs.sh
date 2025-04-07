@@ -37,7 +37,6 @@ systemctl restart systemd-networkd
 ## https://wiki.archlinux.org/title/Network_configuration#IP_addresses
 ip -c a
 passwd
-exit
 
 ## https://wiki.archlinux.org/title/Install_Arch_Linux_via_SSH#On_the_local_machine
 # Connect through ssh: root@ip
@@ -65,15 +64,14 @@ MPART="/dev/sda" # or "/dev/vda" on case of VPS
 #Leave some free space for SSD long live. See "SSD overprovisioning" for more info
 #ex. 232,9GB round partition to 230Gb. 2,9GB - will be free space, ~10%
 #BIOS: one partition
-#EFI: gpt, first partition should be efi, 16Mb, ef00 type, all other space - one partition.
+#EFI: gpt, first partition should be efi, 1Mb, EFI partition, all other space - one partition round GB, other for overprovisioning 
 
 ## https://wiki.archlinux.org/title/Fdisk - cfidsk - a curses-based user interface
 #for delete boot table add -z
 cfdisk -z $MPART
 
 #for EFI
-# mkfs.fat -F32 /dev/sda1
-# mount -m /dev/sda1 /mnt/boot/efi
+# mkfs.fat -F12 /dev/sda1
 
 ## https://wiki.archlinux.org/title/Btrfs#File_system_creation
 #formating one partition in my case, with EFI it will be sda2 or vda2
@@ -82,25 +80,25 @@ mkfs.btrfs $MPART"1"
 
 #making btrfs subvolumes due to https://github.com/hirak99/yabsnap#recommended-subvolume-layout
 mount $MPART"1" /mnt
-cd /mnt
 ## https://wiki.archlinux.org/title/Btrfs#Creating_a_subvolume
-btrfs subvolume create @
-btrfs subvolume create @home
-btrfs subvolume create @snapshots
-btrfs subvolume create @swap
+btrfs subvolume create /mnt/@
+btrfs subvolume create /mnt/@home
+btrfs subvolume create /mnt/@.snapshots
 
-#Check if it is everything ok? Should be "@ @home @snapshots @swap"
-ls
+#Check if it is everything ok? Should be "@ @home @.snapshots "
+ls /mnt
 #leave directory for unmount
-cd && umount /mnt
+umount /mnt
 
 #Remount subvolumes. Options for SSD
 ## https://ventureo.codeberg.page/source/file-systems.html#btrfs
+## https://btrfs.readthedocs.io/en/latest/Administration.html
+#For EFI you should use $MPART"2" below
 mount -o ssd_spread,compress=zstd:3,max_inline=256,subvol=@ $MPART"1" /mnt
-mkdir /mnt/{home,.snapshots,.swap}
-mount -o ssd_spread,compress=zstd:3,max_inline=256,subvol=@home $MPART"1" /mnt/home
-mount -o ssd_spread,compress=zstd:3,max_inline=256,subvol=@snapshots $MPART"1" /mnt/.snapshots
-mount -o ssd_spread,compress=zstd:3,max_inline=256,subvol=@swap $MPART"1" /mnt/.swap
+mount -m -o ssd_spread,compress=zstd:3,max_inline=256,subvol=@home $MPART"1" /mnt/home
+mount -m -o ssd_spread,compress=zstd:3,max_inline=256,subvol=@.snapshots $MPART"1" /mnt/.snapshots
+#For EFI
+# mount -m /dev/sda1 /mnt/boot/efi
 
 ## https://bbs.archlinux.org/viewtopic.php?id=260291
 #Prevent making subvolumes by systemd
@@ -120,7 +118,7 @@ TODO: one line adding
 #Install archlinux base. Standard linux kernel.
 pacstrap -K /mnt base linux grub btrfs-progs sudo openssh micro # minimum - VPS
 
-##https://wiki.archlinux.org/title/Microcode
+## https://wiki.archlinux.org/title/Microcode
 #If VPS and other virtualisations skip this step!
 #For AMD - amd-ucode
 #pacstrap /mnt amd-ucode
@@ -136,17 +134,15 @@ pacstrap -K /mnt base linux grub btrfs-progs sudo openssh micro # minimum - VPS
 
 cp -i /etc/pacman.conf /mnt/etc/pacman.conf
 
-##https://wiki.archlinux.org/title/Installation_guide#Configure_the_system
+## https://wiki.archlinux.org/title/Installation_guide#Configure_the_system
 genfstab -U /mnt >> /mnt/etc/fstab
 arch-chroot /mnt
 ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime && hwclock --systohc #Use your own region
-# fix for line 115...
-touch /usr/share/locale/locale.alias
 sed -i 's/#en_GB.UTF-8/en_GB.UTF-8/' /etc/locale.gen && locale-gen
 echo "LANG=en_GB.UTF-8" > /etc/locale.conf
 
 M=arch
-echo $M >> /etc/hostname
+hostnamectl hostname $M
 printf "127.0.0.1 localhost\n::1       localhost\n127.0.0.1 $M.localhost $M\n" >> /etc/hosts
 
 ## https://wiki.archlinux.org/title/Mkinitcpio/Minimal_initramfs
@@ -168,6 +164,7 @@ grub-install --recheck /dev/sda #Or /dev/vda for VPS
 ## https://wiki.archlinux.org/title/GRUB#Configuration
 # sed -i 's/#GRUB_DISABLE_OS_PROBER=false/GRUB_DISABLE_OS_PROBER=false/' /etc/default/grub
 # sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=0/' /etc/default/grub
+grub-mkconfig -o /boot/grub/grub.cfg
 
 #Double check files!
 cat /etc/fstab /etc/hostname /etc/hosts
@@ -177,10 +174,10 @@ U=nebulosa
 useradd -mG wheel,storage $U
 passwd $U
 
-## https://wiki.archlinux.org/title/Sudo#Example_entries
-sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
+## https://wiki.archlinux.org/title/Sudo#Configure_sudo_using_drop-in_files_in_/etc/sudoers.d
+echo '%wheel ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_wheel && chmod -c 0440 /etc/sudoers.d/00_wheel && visudo -c
 
-## https://wiki.archlinux.org/title/Systemd-networkd#systemd-networkd-wait-online
+## https://wiki.archlinux.org/title/Systemd-networkd#Multiple_interfaces_that_are_not_connected_all_the_time
 mkdir -p /etc/systemd/system/systemd-networkd-wait-online.service.d
 printf "[Service]\nExecStart=\nExecStart=/usr/lib/systemd/systemd-networkd-wait-online --any\n" > /etc/systemd/system/systemd-networkd-wait-online.service.d/wait-for-only-one-interface.conf
 
@@ -202,7 +199,7 @@ printf "[zram0]\nzram-size = min(ram / 2, 4096)\ncompression-algorithm = zstd\n"
 # pacman -S reflector
 # systemctl enable reflector.timer
 ## https://wiki.archlinux.org/title/Systemd-homed
-systemctl enable systemd-homed
+systemctl disable systemd-homed
 ## https://wiki.archlinux.org/title/OpenSSH#Daemon_management
 systemctl enable sshd
 
