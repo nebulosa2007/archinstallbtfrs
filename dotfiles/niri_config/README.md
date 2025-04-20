@@ -13,18 +13,18 @@ Installation:
 
    Optional:
    ```
-   meld telegram-desktop nautilus libreoffice-fresh ly
+   ly meld nautilus libreoffice-fresh
    ```
 
    For Waybar (for this config):
    ```
-   blueman curl firefox fuzzel gnome-weather gsconnect iwd jq mpv mpv-mpris
-   openresolv otf-font-awesome pavucontrol pikaur pipewire-media-session pulseaudio
-   pulseaudio-alsa pulseaudio-bluetooth python-pydbus telegram-desktop ttf-font-logos
-   wireguard-tools wl-clipboard ydotool xwayland-satellite
+   blueman brightnessctl cliphist curl fuzzel gnome-weather gsconnect iwd jq
+   libnotify mpv mpv-mpris openresolv otf-font-awesome paru pavucontrol pipewire-media-session
+   polkit power-profiles-daemon pulseaudio pulseaudio-alsa pulseaudio-bluetooth python-pydbus
+   ttf-font-logos wireguard-tools wl-clipboard ydotool
    ```
 
-Also check instructions for waybar: `head -7 ~/.config/waybar/config`
+Also check instructions for waybar: `head -7 ~/.config/waybar/config.jsonc`
 
 3. Niri settings:
 
