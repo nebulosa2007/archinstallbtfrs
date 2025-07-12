@@ -93,7 +93,6 @@ sudo systemctl enable kodi-x11.service
 #For CEC management
 paru -S libcec
 sudo usermod -aG uucp,lock $U
-echo "mesa_glthread=true" | sudo tee -a /etc/environment
 
 #reboot after required
 #Youtube tuning -  https://djnapalm.ru/it/kodi/youtube.html
