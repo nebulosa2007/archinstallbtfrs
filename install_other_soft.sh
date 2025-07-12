@@ -47,14 +47,31 @@ sudo cp /usr/share/nvidia-340xx/20-nvidia.conf /etc/X11/xorg.conf.d/20-nvidia.co
 sudo sed -i 's/Driver "nvidia"/Driver "nvidia"\n  Option "NoLogo" "1"/' /etc/X11/xorg.conf.d/20-nvidia.conf
 sudo sed -i 's/ kms / /' /etc/mkinitcpio.conf
 sudo mkinitcpio -P
-#DMPS Tuning
-printf "Section \"ServerFlags\"\n Option \"IgnoreABI\" \"1\"\n Option \"StandbyTime\" \"0\"\n Option \"SuspendTime\" \"0\"\n Option \"OffTime\" \"0\"\n Option \"BlankTime\" \"0\"\nEndSection" | sudo tee /etc/X11/xorg.conf.d/30-dpms.conf
-#One TV as only display (for good resolution when TV is off)
+#One TV as only display (for good resolution when TV is on)
 ##https://wiki.archlinux.org/title/NVIDIA/Tips_and_tricks#X_with_a_TV_(DFP)_as_the_only_display
 #Supress NVRM messages in dmesg
 sudo sed -i "s/quiet /quiet video=vesa:off /" /etc/default/grub
 sudo sed -i "s/GRUB_GFXPAYLOAD_LINUX=keep/GRUB_GFXPAYLOAD_LINUX=text/" /etc/default/grub
 sudo grub-mkconfig -o /boot/grub/grub.cfg
+
+#Optional intel drivers
+##https://github.com/VDR4Arch/vdr4arch/wiki/VDR4Arch-Installation-(en_US)#intel-va-api
+sudo mkdir -p /usr/lib/firmware/edid
+sudo cp /sys/class/drm/card1-HDMI-A-3/edid /usr/lib/firmware/edid/edid.bin
+sudo sed -i "s/quiet /quiet video=HDMI-A-3:1920x1080@60D drm.edid_firmware=HDMI-A-3:edid/edid.bin/" /etc/default/grub
+sudo grub-mkconfig -o /boot/grub/grub.cfg
+sudo sed -i 's/MODULES=()/MODULES=(i915)/' /etc/mkinitcpio.conf
+sudo sed -i 's/FILES=()/FILES=(/usr/lib/firmware/edid/edid.bin)/' /etc/mkinitcpio.conf
+sudo mkinitcpio -P
+##https://wiki.archlinux.org/title/Intel_graphics#Xorg_configuration
+printf "Section \"Device\"\n Identifier \"Intel Graphics\"\n Driver \"modesetting\"\n Option \"DRI\" \"iris\"\n Option \"TearFree\" \"false\"\n Option \"TripleBuffer\" \"false\"\n Option \"SwapbuffersWait\" \"false\"\nEndSection" | sudo tee /etc/X11/xorg.conf.d/20-intel.conf
+
+#DMPS Tuning
+printf "Section \"ServerFlags\"\n Option \"IgnoreABI\" \"1\"\n Option \"StandbyTime\" \"0\"\n Option \"SuspendTime\" \"0\"\n Option \"OffTime\" \"0\"\n Option \"BlankTime\" \"0\"\nEndSection" | sudo tee /etc/X11/xorg.conf.d/30-dpms.conf
+
+#Set Locales
+##https://wiki.archlinux.org/title/Xorg/Keyboard_configuration#Using_localectl
+sudo localectl --no-convert set-x11-keymap us,ru "" "" grp:alt_shift_toggle
 
 #Installing Kodi with autologin lightdm
 paru -S kodi lightdm accountsservice
