@@ -18,24 +18,26 @@
 ## IPv6 static: https://wiki.archlinux.org/title/IPv6#systemd-networkd_3
 ## /etc/systemd/network/20-ethernet.network
 ## [Match]
+## Type=ether
 ## Name=en*
 ## Name=eth*
-##
+## 
+## [Link]
+## RequiredForOnline=routable
+## 
 ## [Network]
 ## Gateway=......
 ## Address=....../24  - IPv4
 ##
 ## Gateway=......
 ## Address=....../48  - IPv6
-## LinkLocalAddressing=no
-## IPv6AcceptRA=false
+## 
+## DNS=1.1.1.1 8.8.8.8 2606:4700:4700::1111 2001:4860:4860::8888
 
-## https://wiki.archlinux.org/title/Domain_name_resolution#Glibc_resolver
-echo "nameserver 9.9.9.9" > /etc/resolv.conf
 systemctl restart systemd-networkd
 
 ## https://wiki.archlinux.org/title/Network_configuration#IP_addresses
-ip -c a
+ip a
 passwd
 
 ## https://wiki.archlinux.org/title/Install_Arch_Linux_via_SSH#On_the_local_machine
@@ -63,7 +65,7 @@ MPART="/dev/sda" # or "/dev/vda" on case of VPS
 #For Desktop
 #Leave some free space for SSD long live. See "SSD overprovisioning" for more info
 #ex. 232,9GB round partition to 230Gb. 2,9GB - will be free space, ~10%
-#BIOS: one partition
+#BIOS: dos, one partition, primary, bootable
 #EFI: gpt, first partition should be efi, 1Mb, EFI partition, all other space - one partition round GB, other for overprovisioning 
 
 ## https://wiki.archlinux.org/title/Fdisk - cfidsk - a curses-based user interface
@@ -143,13 +145,11 @@ echo "LANG=en_GB.UTF-8" > /etc/locale.conf
 
 M=arch
 hostnamectl hostname $M
-printf "127.0.0.1 localhost\n::1       localhost\n127.0.0.1 $M.localhost $M\n" >> /etc/hosts
 
 ## https://wiki.archlinux.org/title/Mkinitcpio/Minimal_initramfs
 #On a BTRFS ONLY disk (without separate partition fat for EFI) remove fsck HOOK form /etc/mkinitcpio.conf
 # sed -i "s/PRESETS=('default' 'fallback')/PRESETS=('default')/" /etc/mkinitcpio.d/linux.preset
 # mkinitcpio -P
-# rm /boot/initramfs-linux-fallback.img
 
 passwd #For root
 
@@ -167,7 +167,7 @@ grub-install --recheck /dev/sda #Or /dev/vda for VPS
 grub-mkconfig -o /boot/grub/grub.cfg
 
 #Double check files!
-cat /etc/fstab /etc/hostname /etc/hosts
+cat /etc/fstab /etc/hosts
 
 ## https://wiki.archlinux.org/title/Users_and_groups#User_management
 U=nebulosa
@@ -189,10 +189,11 @@ printf "[Service]\nExecStart=\nExecStart=/usr/lib/systemd/systemd-networkd-wait-
 # printf "[Match]\nName=wl*\n\n[Network]\nDHCP=yes\nIgnoreCarrierLoss=3s\n" > /etc/systemd/network/25-wireless.network
 # systemctl enable iwd
 systemctl enable systemd-networkd
+systemctl enable systemd-resolved
 
 #Zram https://wiki.archlinux.org/title/Zram#Using_zram-generator
 pacman -S zram-generator
-printf "[zram0]\nzram-size = min(ram / 2, 4096)\ncompression-algorithm = zstd\n" > /etc/systemd/zram-generator.conf
+echo "[zram0]" > /etc/systemd/zram-generator.conf
 
 #Other
 ## https://wiki.archlinux.org/title/Reflector#systemd_timer
@@ -236,7 +237,7 @@ sudo systemctl enable --now systemd-resolved.service
 sudo systemctl restart systemd-networkd
 
 #Check internet connection and DNS resolution - no error is ok
-ip -c a && (eval $(printf 'ping -c1 "%s" >/dev/null & ' 95.217.163.246 archlinux.org) && wait;)
+ip a && (eval $(printf 'ping -c1 "%s" >/dev/null & ' 95.217.163.246 archlinux.org) && wait;)
 
 #Optional
 ## https://wiki.archlinux.org/title/Linux_console/Keyboard_configuration
